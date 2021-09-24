@@ -1,7 +1,8 @@
 #Make file, use 'make all'
 
 TARGET = main
-OBJDIR = build/obj
+OBJDIR = obj
+SRCDIR = src
 CXX = g++
 CXX_FLAGS = -std=c++17 -g
 LINK_FLAGS = 
@@ -12,13 +13,13 @@ all: $(TARGET)
 $(TARGET): $(OBJDIR)/main.o $(OBJDIR)/Table.o $(OBJDIR)/Database.o
 	$(CXX) $(CXX_FLAGS) $(OBJDIR)/main.o $(OBJDIR)/Table.o $(OBJDIR)/Database.o -o $(TARGET) $(LINK_FLAGS)
 
-$(OBJDIR)/main.o: main.cpp
+$(OBJDIR)/main.o: $(SRCDIR)main.cpp
 	$(CXX) $(CXX_FLAGS) -c $< $(COMP_FLAGS) -o $@
 
-$(OBJDIR)/Table.o: Table.cpp
+$(OBJDIR)/Table.o: $(SRCDIR)Table.cpp
 	$(CXX) $(CXX_FLAGS) -c $< $(COMP_FLAGS) -o $@
 
-$(OBJDIR)/Database.o: Database.cpp
+$(OBJDIR)/Database.o: $(SRCDIR)Database.cpp
 	$(CXX) $(CXX_FLAGS) -c $< $(COMP_FLAGS) -o $@
 
 
