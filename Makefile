@@ -6,7 +6,7 @@ TARGET := main
 SOURCES := $(wildcard src/*.c src/*.cpp)
 OBJECTS := $(patsubst src%,obj%, $(patsubst %.c,%.o, $(patsubst %.cpp,%.o,$(SOURCES))))
 
-INCLUDE := -I.
+INCLUDE := -I./inc
 LIBPATH :=
 LIBS :=
 

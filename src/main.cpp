@@ -4,7 +4,7 @@
 #include <sstream>
 #include "Database.h"
 
-#include "CreateCommand.h"
+#include "Commands/CreateCommand.h"
 
 std::string get_command(std::string input) {
     std::string command = "";

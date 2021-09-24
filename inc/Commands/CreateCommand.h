@@ -1,6 +1,4 @@
-#pragma once
-
-#include "ICommand.h"
+#include "../ICommand.h"
 
 class CreateCommand : public ICommand {
     virtual bool match(std::string input) {
