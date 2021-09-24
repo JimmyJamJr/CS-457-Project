@@ -1,28 +1,31 @@
-#Make file, use 'make all'
+# Jimson Huang
+# CS 457 Project 1
+# Universal C/C++ Makefile
 
-TARGET = main
-OBJDIR = obj
-SRCDIR = src
-CXX = g++
-CXX_FLAGS = -std=c++17 -g
-LINK_FLAGS = 
-COMP_FLAGS = 
+TARGET := main
+SOURCES := $(wildcard src/*.c src/*.cpp)
+OBJECTS := $(patsubst src%,obj%, $(patsubst %.c,%.o, $(patsubst %.cpp,%.o,$(SOURCES))))
 
-all: $(TARGET)
+INCLUDE := -I.
+LIBPATH :=
+LIBS :=
 
-$(TARGET): $(OBJDIR)/main.o $(OBJDIR)/Table.o $(OBJDIR)/Database.o
-	$(CXX) $(CXX_FLAGS) $(OBJDIR)/main.o $(OBJDIR)/Table.o $(OBJDIR)/Database.o -o $(TARGET) $(LINK_FLAGS)
+FLAGS := -Wall -std=c++17
+CCFLAGS := $(FLAGS)
+CXXFLAGS := $(FLAGS)
 
-$(OBJDIR)/main.o: $(SRCDIR)main.cpp
-	$(CXX) $(CXX_FLAGS) -c $< $(COMP_FLAGS) -o $@
+CC := gcc
+CXX := g++
 
-$(OBJDIR)/Table.o: $(SRCDIR)Table.cpp
-	$(CXX) $(CXX_FLAGS) -c $< $(COMP_FLAGS) -o $@
+all: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(OBJECTS) -o $(TARGET) $(LIBPATH) $(LIBS)
 
-$(OBJDIR)/Database.o: $(SRCDIR)Database.cpp
-	$(CXX) $(CXX_FLAGS) -c $< $(COMP_FLAGS) -o $@
+%.o: ../src/%.c
+	$(CC) $(CCFLAGS) $(INCLUDE) -c $< -o $@
 
+%.o: ../src/%.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
-	-rm -f $(OBJDIR)/*.o
-	-rm -f $(TARGET)
+	rm -rf obj/*
+	rm -f $(TARGET)
