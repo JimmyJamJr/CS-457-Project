@@ -5,6 +5,8 @@
 #include "Database.h"
 
 #include "Commands/CreateCommand.h"
+#include "Commands/DropCommand.h"
+#include "Commands/UseCommand.h"
 
 std::string get_command(std::string input) {
     std::string command = "";
@@ -38,59 +40,41 @@ std::string to_upper(std::string input) {
 
 int main() {
     bool quit = false;
+
+    ICommand * commands[] = {
+        new CreateCommand(),
+        new DropCommand(),
+        new UseCommand()
+    };
+
+    std::string current_database = "";
+
     do {
         std::string input;
         std::cout << "# ";
         getline(std::cin, input);
-        
-        std::string command = to_upper(get_command(input));
-        std::string parms = get_parameters(input);
-
-        // std::cout << parms << "\n";
-
-        if (command == ".EXIT") {
+    
+        if (input == ".exit" || input == ".EXIT") {
             std::cout << "All done.\n";
             quit = true;
         }
-        else if (command == "CREATE") {
-            std::string type = to_upper(get_command(parms));
-            std::string name = get_parameters(parms);
-            if (type == "DATABASE") {
-                bool success = Database::createDatabase(name);
-                std::cout << (success ? "Database " + name + " created." : "!Failed to create database " + name + " because it already exists.") << "\n";
-            }
-            else if (type == "TABLE") {
-
-            }
-            else {
-                std::cout << "!CREATE command failed, invalid object type " + type + ".\n";
-            }
-        }
-        else if (command == "DROP") {
-            std::string type = to_upper(get_command(parms));
-            std::string name = get_parameters(parms);
-            if (type == "DATABASE") {
-                bool success = Database::deleteDatabase(name);
-                std::cout << (success ? "Database " + name + " deleted." : "!Failed to delete database " + name + " because it does not exist.") << "\n";
-            }
-            else if (type == "TABLE") {
-
-            }
-            else {
-                std::cout << "!CREATE command failed, invalid object type " + type + ".\n";
-            }
-        }
-        else if (command == "SELECT") {
-            
-        }
-        else if (command == "ALTER") {
-            
-        }
-        else if (command == "USE") {
-            
-        }
         else {
-            std::cout << "Command not recongnized.\n";
+            bool recongnized = false;
+            for (ICommand * cmd : commands) {
+                if (cmd->match(input)) {
+                    std::string output = cmd->execute(input, current_database);
+                    if (output != "") {
+                        current_database = output;
+                    }
+                    recongnized = true;
+                    break;
+                }
+            }
+
+            if (!recongnized) {
+                std::cout << "Command not recongnized.\n";
+            }
         }
+
     } while (!quit);
 }

@@ -2,9 +2,9 @@
 
 #include "ICommand.h"
 
-class CreateCommand : public ICommand {
+class DropCommand : public ICommand {
     virtual bool match(std::string input) {
-        return to_upper(get_command(input)) == "CREATE";
+        return to_upper(get_command(input)) == "DROP";
     };
 
     virtual std::string execute(std::string input, std::string database) {
@@ -12,8 +12,8 @@ class CreateCommand : public ICommand {
         std::string type = to_upper(get_command(parms));
         std::string name = get_parameters(parms);
         if (type == "DATABASE") {
-            bool success = Database::createDatabase(name);
-            std::cout << (success ? "Database " + name + " created." : "!Failed to create database " + name + " because it already exists.") << "\n";
+            bool success = Database::deleteDatabase(name);
+            std::cout << (success ? "Database " + name + " deleted." : "!Failed to delete database " + name + " because it does not exist.") << "\n";
         }
         else if (type == "TABLE") {
 

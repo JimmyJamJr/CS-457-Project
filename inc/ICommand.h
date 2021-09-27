@@ -2,6 +2,8 @@
 
 #include <string>
 #include <algorithm>
+#include <iostream>
+#include "Database.h"
 
 class ICommand {
     protected:
@@ -11,5 +13,5 @@ class ICommand {
 
     public:
     virtual bool match(std::string input) = 0;
-    virtual bool execute(std::string input) = 0;
+    virtual std::string execute(std::string input, std::string database = "") = 0;
 };

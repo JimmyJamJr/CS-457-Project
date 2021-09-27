@@ -16,8 +16,11 @@ std::string Database::getDatabaseFolder() {
     return std::filesystem::current_path().generic_string() + "/";
 }
 
-std::shared_ptr<Database> Database::getDatabase(std::string name) {
-    
+std::string Database::getDatabase(std::string name) {
+    if (std::filesystem::exists(getDatabaseFolder() + name + "/")) {
+        return getDatabaseFolder() + name + "/";
+    }
+    return "";
 }
 
 bool Database::createDatabase(std::string name) {

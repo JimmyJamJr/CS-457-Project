@@ -14,7 +14,7 @@ class Database {
 
     public:
     static std::shared_ptr<std::vector<Database>> readDBs();
-    static std::shared_ptr<Database> getDatabase(std::string name);
+    static std::string getDatabase(std::string name);
     static bool createDatabase(std::string name);
     static bool deleteDatabase(std::string name);
     Database(std::string name);
