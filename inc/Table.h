@@ -5,7 +5,9 @@
 class Table {
     private:
     std::string name;
-    std::string filepath;
+    std::string database;
     public:
-    Table(std::string folder_path, std::string name);
+    static bool createTable(std::string databse, std::string name, std::string schema);
+    Table(std::string database, std::string name);
+
 };

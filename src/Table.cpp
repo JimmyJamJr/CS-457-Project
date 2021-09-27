@@ -1,9 +1,19 @@
 #include "Table.h"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
-Table::Table(std::string _folder_path, std::string _name) {
+Table::Table(std::string _database, std::string _name) {
     name = _name;
-    std::fstream file;
-    file.open(_folder_path + _name, std::fstream::app);
+    database = _database;
+}
+
+bool Table::createTable(std::string database, std::string name, std::string schema) {
+    if (std::filesystem::exists(database + name + ".txt")) {
+        return false;
+    }
+    std::ofstream f(database + name + "/");
+    f << "";
+    f.close();
+    return true;
 }

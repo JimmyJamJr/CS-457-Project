@@ -5,6 +5,13 @@ std::string ICommand::to_upper(std::string input) {
     return input;
 }
 
+std::string ICommand::remove_semicolon(std::string input) {
+    if (input.back() == ';') {
+        input.pop_back();
+    }
+    return input;
+}
+
 std::string ICommand::get_command(std::string input) {
     std::string command = "";
     for (char c : input) {

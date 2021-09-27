@@ -8,6 +8,7 @@ class DropCommand : public ICommand {
     };
 
     virtual std::string execute(std::string input, std::string database) {
+        input = remove_semicolon(input);
         std::string parms = get_parameters(input);
         std::string type = to_upper(get_command(parms));
         std::string name = get_parameters(parms);
