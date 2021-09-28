@@ -33,7 +33,7 @@ bool Database::createDatabase(std::string name) {
 
 bool Database::deleteDatabase(std::string name) {
     if (std::filesystem::exists(getDatabaseFolder() + name + "/")) {
-        std::filesystem::remove(getDatabaseFolder() + name + "/");
+        std::filesystem::remove_all(getDatabaseFolder() + name + "/");
         return true;
     }
     return false;

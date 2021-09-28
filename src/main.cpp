@@ -28,6 +28,7 @@ int main() {
 
         for (std::string entry : input_vec) {
             if (entry == " " || entry == "\n" || entry == "") continue;
+            if (entry.substr(0, 2) == "--") continue;
             if (entry == ".exit" || entry == ".EXIT") {
                 std::cout << "All done.\n";
                 quit = true;

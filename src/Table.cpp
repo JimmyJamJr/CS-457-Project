@@ -12,7 +12,7 @@ bool Table::createTable(std::string database, std::string name, std::string sche
     if (std::filesystem::exists(database + name + ".txt")) {
         return false;
     }
-    std::ofstream f(database + name + "/");
+    std::ofstream f(database + name + ".txt");
     f << schema;
     f.close();
     return true;

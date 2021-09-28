@@ -66,7 +66,7 @@ class CreateCommand : public ICommand {
                 schema += word.substr(0, word.length() - 1);
             }
             else {
-                schema += word + (i % 2 == 0 ? " " : " | ");
+                schema += i % 2 == 0 ? word + " " : word.substr(0, word.length() - 1) + " | ";
             }
             i++;
         }
