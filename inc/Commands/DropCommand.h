@@ -11,7 +11,7 @@ class DropCommand : public ICommand {
         std::vector<std::string> parms = split(input, " ");
 
         if (parms.size() < 3) {
-            std::cout << "!DROP command failed, requires type and name of object.\n";
+            std::cout << "!DROP command failed, requires type and name of object." << std::endl;
             return "";
         }
 
@@ -19,13 +19,19 @@ class DropCommand : public ICommand {
         std::string name = parms[2];
         if (type == "DATABASE") {
             bool success = Database::deleteDatabase(name);
-            std::cout << (success ? "Database " + name + " deleted." : "!Failed to delete database " + name + " because it does not exist.") << "\n";
+            std::cout << (success ? "Database " + name + " deleted." : "!Failed to delete " + name + " because it does not exist.") << std::endl;
         }
         else if (type == "TABLE") {
+            if (database == "") {
+                std::cout << "!Failed to delete " + name + " because no database is being used." << std::endl;
+                return "";
+            }
 
+            bool success = Table::deleteTable(database, name);
+            std::cout << (success ? "Table " + name + " deleted." : "!Failed to delete " + name + " because it does not exist.") << std::endl;
         }
         else {
-            std::cout << "!CREATE command failed, invalid object type " + type + ".\n";
+            std::cout << "!CREATE command failed, invalid object type " + type + "." << std::endl;
         }
 
         return "";

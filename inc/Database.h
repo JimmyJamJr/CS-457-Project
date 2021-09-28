@@ -7,9 +7,6 @@
 
 class Database {
     private:
-    int tableCount_;
-    std::vector<std::shared_ptr<Table>> tables_;
-
     static std::string getDatabaseFolder();
 
     public:
@@ -17,6 +14,4 @@ class Database {
     static std::string getDatabase(std::string name);
     static bool createDatabase(std::string name);
     static bool deleteDatabase(std::string name);
-    Database(std::string name);
-    std::shared_ptr<Table> getTable(std::string name);
 };

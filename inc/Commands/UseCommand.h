@@ -11,16 +11,16 @@ class UseCommand : public ICommand {
         std::vector<std::string> parms = split(input, " ");
 
         if (parms.size() < 2) {
-            std::cout << "!USE command failed, requires name of database.\n";
+            std::cout << "!USE command failed, requires name of database." << std::endl;
             return "";
         }
 
         std::string db = Database::getDatabase(parms[1]);
         if (db == "") {
-            std::cout << "!Failed to use " << parms[1] << " because it does not exist.\n";
+            std::cout << "!Failed to use " << parms[1] << " because it does not exist." << std::endl;
         }
         else {
-            std::cout << "Using database " << parms[1] << ".\n";
+            std::cout << "Using database " << parms[1] << "." << std::endl;
         }
 
         return db;

@@ -8,6 +8,7 @@
 #include "Commands/CreateCommand.h"
 #include "Commands/DropCommand.h"
 #include "Commands/UseCommand.h"
+#include "Commands/SelectCommand.h"
 
 int main() {
     bool quit = false;
@@ -15,7 +16,8 @@ int main() {
     ICommand * commands[] = {
         new CreateCommand(),
         new DropCommand(),
-        new UseCommand()
+        new UseCommand(),
+        new SelectCommand()
     };
 
     std::string current_database = "";

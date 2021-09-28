@@ -12,7 +12,7 @@ class CreateCommand : public ICommand {
         std::vector<std::string> parms = split(input, " ");
 
         if (parms.size() < 3) {
-            std::cout << "!CREATE command failed, requires type and name of object.\n";
+            std::cout << "!CREATE command failed, requires type and name of object." << std::endl;
             return "";
         }
 
@@ -20,27 +20,27 @@ class CreateCommand : public ICommand {
         std::string name = parms[2];
         if (type == "DATABASE") {
             bool success = Database::createDatabase(name);
-            std::cout << (success ? "Database " + name + " created." : "!Failed to create database " + name + " because it already exists.") << "\n";
+            std::cout << (success ? "Database " + name + " created." : "!Failed to create database " + name + " because it already exists.") << std::endl;
         }
         else if (type == "TABLE") {
             std::vector<std::string> schema_vec = {parms.begin() + 3, parms.end()};
             std::string schema = create_schema(schema_vec);
             
             if (database == "") {
-                std::cout << "!Failed to create table " + name + " because no database is being used.\n";
+                std::cout << "!Failed to create table " + name + " because no database is being used." << std::endl;
                 return "";
             }
 
             if (schema == "") {
-                std::cout << "!Failed to create table " + name + " because the schema format is incorrect.\n";
+                std::cout << "!Failed to create table " + name + " because the schema format is incorrect." << std::endl;
                 return "";
             }
             
             bool success = Table::createTable(database, name, schema);
-            std::cout << (success ? "Table " + name + " created." : "!Failed to create table " + name + " because it already exists.") << "\n";
+            std::cout << (success ? "Table " + name + " created." : "!Failed to create table " + name + " because it already exists.") << std::endl;
         }
         else {
-            std::cout << "!CREATE command failed, invalid object type " + type + ".\n";
+            std::cout << "!CREATE command failed, invalid object type " + type + "." << std::endl;
         }
 
         return "";
