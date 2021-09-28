@@ -40,3 +40,26 @@ bool Table::deleteTable(std::string database, std::string name) {
     }
     return false;
 }
+
+bool Table::alterSchema(std::string database, std::string name, std::string schema) {
+    if (!std::filesystem::exists(database + name + ".txt")) {
+        return false;;
+    }
+
+    std::ifstream inf(database + name + ".txt");
+    std::vector<std::string> lines;
+    std::string line;
+    while (getline(inf, line)) {
+        if (line.size() > 0) 
+            lines.push_back(line);
+    }
+    inf.close();
+
+    lines[0] = schema;
+    std::ofstream outf(database + name + ".txt");
+    for (std::string l : lines) {
+        outf << l << "\n";
+    }
+    outf.close();
+    return true;
+}
