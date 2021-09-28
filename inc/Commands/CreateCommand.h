@@ -5,29 +5,34 @@
 class CreateCommand : public ICommand {
     public:
     virtual bool match(std::string input) {
-        return to_upper(get_command(input)) == "CREATE";
+        return to_upper(first_word(input)) == "CREATE";
     };
 
     virtual std::string execute(std::string input, std::string database) {
-        input = remove_semicolon(input);
-        std::string parms = get_parameters(input);
-        std::string type = to_upper(get_command(parms));
-        std::string name = get_parameters(parms);
+        std::vector<std::string> parms = split(input, " ");
+
+        if (parms.size() < 3) {
+            std::cout << "!CREATE command failed, requires type and name of object.\n";
+            return "";
+        }
+
+        std::string type = to_upper(parms[1]);
+        std::string name = parms[2];
         if (type == "DATABASE") {
             bool success = Database::createDatabase(name);
             std::cout << (success ? "Database " + name + " created." : "!Failed to create database " + name + " because it already exists.") << "\n";
         }
         else if (type == "TABLE") {
-            std::string schema = get_parameters(name);
-            name = get_command(name);
+            std::vector<std::string> schema_vec = {parms.begin() + 3, parms.end()};
+            std::string schema = create_schema(schema_vec);
             
             if (database == "") {
                 std::cout << "!Failed to create table " + name + " because no database is being used.\n";
                 return "";
             }
 
-            if (!schemaCheck(schema)) {
-                std::cout << "!Failed to create table " + name + " because the shcema format is incorrect.\n";
+            if (schema == "") {
+                std::cout << "!Failed to create table " + name + " because the schema format is incorrect.\n";
                 return "";
             }
             
@@ -42,10 +47,30 @@ class CreateCommand : public ICommand {
     };
 
     private:
-    bool schemaCheck(std::string schema) {
-        if (schema == "") return false;
-        if (schema.front() != '(' || schema.back() != ')') return false;
-        if (schema.find(' ') == std::string::npos) return false;
-        return true;
+    std::string create_schema(std::vector<std::string> schema_vec) {
+        if (schema_vec.size() < 2 || schema_vec.size() % 2 != 0) return "";
+
+        std::string schema = "";
+        int i = 0;
+        for (std::string word : schema_vec) {
+            if (i == 0) {
+                if (word[0] != '(') {
+                    return "";
+                }
+                schema += word.substr(1, word.length() - 1) + " ";
+            }
+            else if (i == schema_vec.size() - 1) {
+                if (word[word.length() - 1] != ')') {
+                    return "";
+                }
+                schema += word.substr(0, word.length() - 1);
+            }
+            else {
+                schema += word + (i % 2 == 0 ? " " : " | ");
+            }
+            i++;
+        }
+
+        return schema;
     }
 };

@@ -4,18 +4,23 @@
 
 class UseCommand : public ICommand {
     virtual bool match(std::string input) {
-        return to_upper(get_command(input)) == "USE";
+        return to_upper(first_word(input)) == "USE";
     };
 
     virtual std::string execute(std::string input, std::string database) {
-        input = remove_semicolon(input);
-        std::string parms = get_parameters(input);
-        std::string db = Database::getDatabase(parms);
+        std::vector<std::string> parms = split(input, " ");
+
+        if (parms.size() < 2) {
+            std::cout << "!USE command failed, requires name of database.\n";
+            return "";
+        }
+
+        std::string db = Database::getDatabase(parms[1]);
         if (db == "") {
-            std::cout << "!Failed to use " << parms << " because it does not exist.\n";
+            std::cout << "!Failed to use " << parms[1] << " because it does not exist.\n";
         }
         else {
-            std::cout << "Using database " << parms << ".\n";
+            std::cout << "Using database " << parms[1] << ".\n";
         }
 
         return db;

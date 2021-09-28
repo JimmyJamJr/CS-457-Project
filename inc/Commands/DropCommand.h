@@ -4,14 +4,19 @@
 
 class DropCommand : public ICommand {
     virtual bool match(std::string input) {
-        return to_upper(get_command(input)) == "DROP";
+        return to_upper(first_word(input)) == "DROP";
     };
 
     virtual std::string execute(std::string input, std::string database) {
-        input = remove_semicolon(input);
-        std::string parms = get_parameters(input);
-        std::string type = to_upper(get_command(parms));
-        std::string name = get_parameters(parms);
+        std::vector<std::string> parms = split(input, " ");
+
+        if (parms.size() < 3) {
+            std::cout << "!DROP command failed, requires type and name of object.\n";
+            return "";
+        }
+
+        std::string type = to_upper(parms[1]);
+        std::string name = parms[2];
         if (type == "DATABASE") {
             bool success = Database::deleteDatabase(name);
             std::cout << (success ? "Database " + name + " deleted." : "!Failed to delete database " + name + " because it does not exist.") << "\n";

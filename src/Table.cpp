@@ -13,7 +13,7 @@ bool Table::createTable(std::string database, std::string name, std::string sche
         return false;
     }
     std::ofstream f(database + name + "/");
-    f << "";
+    f << schema;
     f.close();
     return true;
 }
