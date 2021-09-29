@@ -44,21 +44,26 @@ int main(int ac, char** av) {
 
     // Repeat until program exit command is encountered
     do {
-        std::string input;
+        std::string input = "";
         if (ac > 1 && getline(sql, input)) {
 
         }
         else {
             std::cout << "SQLit> ";
-            getline(std::cin, input);
+            // Skip whitespace lines
+            while (std::all_of(input.begin(), input.end(), isspace))
+                getline(std::cin, input);
         }
 
         // Split input by ; into a list of commands
         std::vector<std::string> input_vec = split(input, ";");
         for (std::string entry : input_vec) {
             // Skip comments and blank lines
+            if (std::all_of(entry.begin(), entry.end(), isspace)) {
+                continue;
+            }
             if (entry.substr(0, 2) == "--") continue;
-            if (entry == " " || entry == "\n" || entry == "" || entry == "\r") continue;
+
             // Check for exit condition
             if (entry.find(".exit") != std::string::npos || entry.find(".EXIT") != std::string::npos) {
                 std::cout << "All done.\n";
