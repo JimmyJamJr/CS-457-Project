@@ -1,16 +1,24 @@
+// Jimson Huang
+// CS457
+// 9/29/2021
+// Select command for selecting attributes from a table.
+
 #pragma once
 
 #include "ICommand.h"
 #include <fstream>
 
 class SelectCommand : public ICommand {
+    // Check command prefix
     virtual bool match(std::string input) {
         return to_upper(first_word(input)) == "SELECT";
     };
 
+    // Execute the command
     virtual std::string execute(std::string input, std::string database) {
         std::vector<std::string> parms = split(input, " ");
 
+        // Command formatting check
         if (parms.size() < 4) {
             std::cout << "!SELECT command failed. Bad syntax." << std::endl;
             return "";
@@ -32,13 +40,16 @@ class SelectCommand : public ICommand {
             return "";
         }
 
+        // Get schema of the table after FROM keyword
         std::string table = parms[fromIndex + 1];
         std::vector<std::string> schema = Table::getSchema(database, table);
         if (schema.size() == 0) {
-            std::cout << "!Failed to select " + table + " because it does not exist." << std::endl;
+            std::cout << "!Failed to query " + table + " because it does not exist." << std::endl;
             return "";
         }
 
+        // Create a list of indexes of the attibutes in the schema that is being selected
+        // If * is used, selects all attributes in the schema
         std::string output = "";
         std::vector<std::string> attribute_names = {parms.begin() + 1, parms.begin() + fromIndex};
         std::vector<int> selected_indexes;
@@ -60,7 +71,9 @@ class SelectCommand : public ICommand {
                 }
             }
         }
-
+        
+        // Open the txt file associated with the table and read through each line,
+        // Printing out the columns corresponding to the attributes that are in selected_index
         std::ifstream file = Table::getFile(database, table);
         std::string line;
         int count = 0;

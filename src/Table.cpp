@@ -1,3 +1,8 @@
+// Jimson Huang
+// CS457
+// 9/29/2021
+// See header file for descriptions.
+
 #include "Table.h"
 
 #include <fstream>
@@ -46,6 +51,7 @@ bool Table::alterSchema(std::string database, std::string name, std::string sche
         return false;;
     }
 
+    // Read all lines of table file into a vector
     std::ifstream inf(database + name + ".txt");
     std::vector<std::string> lines;
     std::string line;
@@ -55,6 +61,7 @@ bool Table::alterSchema(std::string database, std::string name, std::string sche
     }
     inf.close();
 
+    // Change the first line (schema) then write all the lines back into file
     lines[0] = schema;
     std::ofstream outf(database + name + ".txt");
     for (std::string l : lines) {

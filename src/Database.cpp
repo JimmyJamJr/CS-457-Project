@@ -1,9 +1,14 @@
+// Jimson Huang
+// CS457
+// 9/29/2021
+// See header for description
+
 #include "Database.h"
 #include <filesystem>
 #include <iostream>
 
 std::string Database::getDatabaseFolder() {
-    return std::filesystem::current_path().generic_string() + "/";
+    return std::filesystem::current_path().generic_string() + "/dbs/";
 }
 
 std::string Database::getDatabase(std::string name) {

@@ -1,15 +1,22 @@
+// Jimson Huang
+// CS457
+// 9/29/2021
+// Drop command for deleting tables or databases.
 #pragma once
 
 #include "ICommand.h"
 
 class DropCommand : public ICommand {
+    // Check command prefix
     virtual bool match(std::string input) {
         return to_upper(first_word(input)) == "DROP";
     };
 
+    // Execute the command
     virtual std::string execute(std::string input, std::string database) {
         std::vector<std::string> parms = split(input, " ");
 
+        // Command formatting check
         if (parms.size() < 3) {
             std::cout << "!DROP command failed, requires type and name of object." << std::endl;
             return "";
@@ -17,10 +24,12 @@ class DropCommand : public ICommand {
 
         std::string type = to_upper(parms[1]);
         std::string name = parms[2];
+        // Delete a database
         if (type == "DATABASE") {
             bool success = Database::deleteDatabase(name);
             std::cout << (success ? "Database " + name + " deleted." : "!Failed to delete " + name + " because it does not exist.") << std::endl;
         }
+        // Delete a table
         else if (type == "TABLE") {
             if (database == "") {
                 std::cout << "!Failed to delete " + name + " because no database is being used." << std::endl;

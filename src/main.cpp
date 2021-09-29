@@ -1,3 +1,9 @@
+// Jimson Huang
+// CS457
+// 9/29/2021
+// Main file of the program, accepts command line input or
+// .sql file.
+
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -6,25 +12,24 @@
 #include <filesystem>
 #include "Database.h"
 
-#include "Commands/CreateCommand.h"
-#include "Commands/DropCommand.h"
-#include "Commands/UseCommand.h"
-#include "Commands/SelectCommand.h"
-#include "Commands/AlterCommand.h"
+#include "Commands.h"
 
 int main(int ac, char** av) {
     bool quit = false;
 
-    ICommand * commands[] = {
-        new CreateCommand(),
-        new DropCommand(),
-        new UseCommand(),
-        new SelectCommand(),
-        new AlterCommand()
+    // Create list of commands currently support by the program
+    std::shared_ptr<ICommand> commands[] = {
+        std::make_shared<CreateCommand>(),
+        std::make_shared<DropCommand>(),
+        std::make_shared<UseCommand>(),
+        std::make_shared<SelectCommand>(),
+        std::make_shared<AlterCommand>()
     };
 
+    // Current database being used
     std::string current_database = "";
 
+    // Check the command line argument for file input
     std::ifstream sql;
     if (ac > 1) {
         std::string filename(av[1]);
@@ -37,6 +42,7 @@ int main(int ac, char** av) {
         }
     }
 
+    // Repeat until program exit command is encountered
     do {
         std::string input;
         if (ac > 1 && getline(sql, input)) {
@@ -47,17 +53,21 @@ int main(int ac, char** av) {
             getline(std::cin, input);
         }
 
+        // Split input by ; into a list of commands
         std::vector<std::string> input_vec = split(input, ";");
         for (std::string entry : input_vec) {
+            // Skip comments and blank lines
             if (entry.substr(0, 2) == "--") continue;
             if (entry == " " || entry == "\n" || entry == "" || entry == "\r") continue;
+            // Check for exit condition
             if (entry.find(".exit") != std::string::npos || entry.find(".EXIT") != std::string::npos) {
                 std::cout << "All done.\n";
                 quit = true;
             }
             else {
                 bool recongnized = false;
-                for (ICommand * cmd : commands) {
+                // Iterate through commands and look for a matching command to execute
+                for (std::shared_ptr<ICommand> cmd : commands) {
                     if (cmd->match(entry)) {
                         std::string output = cmd->execute(entry, current_database);
                         if (output != "") {
@@ -76,7 +86,8 @@ int main(int ac, char** av) {
         
 
     } while (!quit);
-
+    
+    // Close sql file if opened
     if (ac > 1) {
         sql.close();
     }
