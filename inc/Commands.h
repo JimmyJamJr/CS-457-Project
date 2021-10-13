@@ -12,3 +12,4 @@
 #include "Commands/AlterCommand.h"
 #include "Commands/InsertCommand.h"
 #include "Commands/DeleteCommand.h"
+#include "Commands/UpdateCommand.h"

@@ -64,6 +64,26 @@ class DeleteCommand : public ICommand {
                         deleted_count++;
                     }
                 }
+                else if (op == ">") {
+                    float op_int = std::stof(operand);
+                    float at_int = std::stof(row[attribute_selected]);
+                    if (op_int > at_int) {
+                        lines.push_back(line);
+                    }
+                    else {
+                        deleted_count++;
+                    }
+                }
+                else if (op == "<") {
+                    float op_int = std::stof(operand);
+                    float at_int = std::stof(row[attribute_selected]);
+                    if (op_int < at_int) {
+                        lines.push_back(line);
+                    }
+                    else {
+                        deleted_count++;
+                    }
+                }
             }
             else {
                 lines.push_back(line);

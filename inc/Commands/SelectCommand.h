@@ -81,7 +81,7 @@ class SelectCommand : public ICommand {
             std::vector<std::string> row = split(line, " | ");
             for (int i = 0; i < row.size(); i++) {
                 if (std::find(selected_indexes.begin(), selected_indexes.end(), i) != selected_indexes.end()) {
-                    std::cout << (count > 0 ? " | " : "") << row[i];
+                    std::cout << (count > 0 ? " | " : "") << remove_quotes(row[i]);
                     count++;
                 }
             }

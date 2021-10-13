@@ -55,11 +55,11 @@ std::string remove_semicolon(std::string input) {
 }
 
 std::string remove_quotes(std::string input) {
-    if (input.back() == '\'') {
-        input.pop_back();
-    }
-    if (input.front() == '\'') {
-        input = input.substr(1, input.size() - 1);
+    std::string output = "";
+    for (char c : input) {
+        if (c != '\'') {
+            output += c;
+        }
     }
     return input;
 }
