@@ -23,7 +23,8 @@ int main(int ac, char** av) {
         std::make_shared<DropCommand>(),
         std::make_shared<UseCommand>(),
         std::make_shared<SelectCommand>(),
-        std::make_shared<AlterCommand>()
+        std::make_shared<AlterCommand>(),
+        std::make_shared<InsertCommand>()
     };
 
     // Current database being used

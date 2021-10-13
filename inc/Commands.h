@@ -10,3 +10,4 @@
 #include "Commands/UseCommand.h"
 #include "Commands/SelectCommand.h"
 #include "Commands/AlterCommand.h"
+#include "Commands/InsertCommand.h"

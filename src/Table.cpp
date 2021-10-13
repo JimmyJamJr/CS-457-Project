@@ -70,3 +70,27 @@ bool Table::alterSchema(std::string database, std::string name, std::string sche
     outf.close();
     return true;
 }
+
+bool Table::insert(std::string database, std::string name, std::vector<std::string> tuple) {
+    if (!std::filesystem::exists(database + name + ".txt")) {
+        return false;;
+    }
+
+    std::vector<std::string> schema = getSchema(database, name);
+    if (schema.size() != tuple.size()) {
+        throw "Schema mismatch";
+        return false;
+    }
+
+    std::ofstream outf;
+    outf.open(database + name + ".txt", std::ios::app);
+    outf << "\n";
+    for (int i = 0; i < tuple.size(); i++) {
+        outf << tuple[i];
+        if (i < tuple.size() - 1) {
+            outf << " | ";
+        }
+    }
+    outf.close();
+    return true;
+}

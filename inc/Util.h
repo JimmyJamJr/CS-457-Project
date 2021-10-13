@@ -16,3 +16,5 @@ std::string first_word(std::string);
 std::string to_upper(std::string input);
 // Remove a trailing semicolon in a string, if it exists.
 std::string remove_semicolon(std::string input);
+// Remove quotes surrounding a string, if it exists
+std::string remove_quotes(std::string input);
