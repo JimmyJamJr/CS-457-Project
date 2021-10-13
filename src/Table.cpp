@@ -94,3 +94,14 @@ bool Table::insert(std::string database, std::string name, std::vector<std::stri
     outf.close();
     return true;
 }
+
+bool Table::replace(std::string database, std::string name, std::vector<std::string> lines) {
+    std::ofstream f(database + name + ".txt");
+    for (auto it = lines.begin(); it != lines.end(); it++) {
+        f << *it;
+        if (it != lines.end() - 1) {
+            f << "\n";
+        }
+    }
+    return true;
+}

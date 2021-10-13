@@ -76,12 +76,13 @@ class SelectCommand : public ICommand {
         // Printing out the columns corresponding to the attributes that are in selected_index
         std::ifstream file = Table::getFile(database, table);
         std::string line;
-        int count = 0;
         while (getline(file, line)) {
+            int count = 0;
             std::vector<std::string> row = split(line, " | ");
             for (int i = 0; i < row.size(); i++) {
                 if (std::find(selected_indexes.begin(), selected_indexes.end(), i) != selected_indexes.end()) {
-                    std::cout << (count++ != 0 ? " | " : "") << row[i];
+                    std::cout << (count > 0 ? " | " : "") << row[i];
+                    count++;
                 }
             }
             std::cout << std::endl;

@@ -23,4 +23,6 @@ class Table {
     static bool alterSchema(std::string database, std::string name, std::string schema);
     // Insert a new tuple in the table
     static bool insert(std::string database, std::string name, std::vector<std::string> tuple);
+    // Replace the contents of the table
+    static bool replace(std::string database, std::string name, std::vector<std::string> lines);
 };

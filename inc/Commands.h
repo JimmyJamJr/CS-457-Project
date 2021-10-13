@@ -11,3 +11,4 @@
 #include "Commands/SelectCommand.h"
 #include "Commands/AlterCommand.h"
 #include "Commands/InsertCommand.h"
+#include "Commands/DeleteCommand.h"
