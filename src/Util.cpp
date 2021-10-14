@@ -61,5 +61,5 @@ std::string remove_quotes(std::string input) {
             output += c;
         }
     }
-    return input;
+    return output;
 }

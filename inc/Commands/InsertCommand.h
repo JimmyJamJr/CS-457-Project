@@ -28,13 +28,13 @@ class InsertCommand : public ICommand {
         std::string tuple;
         for (int i = 3; i < parms.size(); i++) {
             if (i == 3) {
-                tuple += remove_quotes(parms[i].substr(7, parms[i].length() - 7));
+                tuple += parms[i].substr(7, parms[i].length() - 7);
             }
             else if (i == parms.size() - 1) {
-                tuple += remove_quotes(parms[i].substr(0, parms[i].length() - 2));
+                tuple += parms[i].substr(0, parms[i].length() - 2);
             }
             else {
-                tuple += remove_quotes(parms[i]);
+                tuple += parms[i];
             }
         }
         std::vector<std::string> tuple_vec = split(tuple, ",");

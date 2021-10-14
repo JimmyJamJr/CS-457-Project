@@ -30,9 +30,23 @@ class SelectCommand : public ICommand {
         }
 
         int fromIndex = -1;
+
+        // Support for WHERE keyword
+        int whereIndex = -1;
+        std::string attribute;
+        int attribute_selected;
+        std::string op;
+        std::string operand;
+
         for (int i = 0; i < parms.size(); i++) {
             if (to_upper(parms[i]) == "FROM") {
                 fromIndex = i;
+            }
+            if (to_upper(parms[i]) == "WHERE") {
+                whereIndex = i;
+                attribute = parms[i+1];
+                op = parms[i+2];
+                operand = parms[i+3];
             }
         }
         if (fromIndex == -1) {
@@ -46,6 +60,20 @@ class SelectCommand : public ICommand {
         if (schema.size() == 0) {
             std::cout << "!Failed to query " + table + " because it does not exist." << std::endl;
             return "";
+        }
+
+        if (whereIndex != -1) {
+            attribute_selected = -1;
+            for (int i = 0 ; i < schema.size(); i++) {
+                if (split(schema[i], " ")[0] == attribute) {
+                    attribute_selected = i;
+                }
+            }
+
+            if (attribute_selected == -1) {
+                std::cout << "!SELECT command failed. Attribute is not in schema." << std::endl;
+                return "";
+            }
         }
 
         // Create a list of indexes of the attibutes in the schema that is being selected
@@ -79,6 +107,33 @@ class SelectCommand : public ICommand {
         while (getline(file, line)) {
             int count = 0;
             std::vector<std::string> row = split(line, " | ");
+            if (whereIndex != -1) {
+                if (op == "=") {
+                    if (operand != row[attribute_selected]) {
+                        continue;
+                    }
+                }
+                else if (op == "!=") {
+                    if (operand == row[attribute_selected]) {
+                        continue;
+                    }
+                }
+                else if (op == ">") {
+                    float op_int = std::stof(operand);
+                    float at_int = std::stof(row[attribute_selected]);
+                    if (op_int > at_int) {
+                        continue;
+                    }
+                }
+                else if (op == "<") {
+                    float op_int = std::stof(operand);
+                    float at_int = std::stof(row[attribute_selected]);
+                    if (op_int < at_int) {
+                        continue;
+                    }
+                }
+            }
+
             for (int i = 0; i < row.size(); i++) {
                 if (std::find(selected_indexes.begin(), selected_indexes.end(), i) != selected_indexes.end()) {
                     std::cout << (count > 0 ? " | " : "") << remove_quotes(row[i]);
