@@ -24,11 +24,13 @@ class AlterCommand : public ICommand {
             return "";
         }
 
+        // Command fails if no database is in use.
         if (database == "") {
             std::cout << "!ALTER command failed. No database is being used." << std::endl;
             return "";
         }
 
+        // Find index of ADD keyword
         int addIndex = -1;
         for (int i = 0; i < parms.size(); i++) {
             if (to_upper(parms[i]) == "ADD") {
@@ -42,7 +44,6 @@ class AlterCommand : public ICommand {
 
         std::string type = to_upper(parms[1]);
         std::string name = parms[2];
-
 
         // Altering a table
         if (type == "TABLE") {

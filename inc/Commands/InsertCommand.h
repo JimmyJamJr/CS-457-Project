@@ -1,3 +1,9 @@
+// Jimson Huang
+// CS457
+// 10/18/2021
+// Insert command for inserting tuples into a table, following an existing
+// schema.
+
 #pragma once
 
 #include "ICommand.h"
@@ -18,6 +24,7 @@ class InsertCommand : public ICommand {
             return "";
         }
 
+        // Command fails if no database is selected.
         if (database == "") {
             std::cout << "!INSERT command failed. No database is being used." << std::endl;
             return "";
@@ -25,6 +32,7 @@ class InsertCommand : public ICommand {
 
         std::string table = parms[2];
 
+        // Reformat the input string to a tuple of attributes separated by space.
         std::string tuple;
         for (int i = 3; i < parms.size(); i++) {
             if (i == 3) {
@@ -37,8 +45,11 @@ class InsertCommand : public ICommand {
                 tuple += parms[i];
             }
         }
+        // Change tuple format to vec
         std::vector<std::string> tuple_vec = split(tuple, ",");
 
+
+        // Try inserting the newly created tuple into the table, error out if not successful.
         bool success;
         try {
             success = Table::insert(database, table, tuple_vec);
@@ -48,6 +59,7 @@ class InsertCommand : public ICommand {
             return "";
         }
 
+        // Command fails if table does not exist
         if (!success) {
             std::cout << "!INSERT command failed. Table does not exist." << std::endl;
             return "";

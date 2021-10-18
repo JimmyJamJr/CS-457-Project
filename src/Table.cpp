@@ -72,16 +72,19 @@ bool Table::alterSchema(std::string database, std::string name, std::string sche
 }
 
 bool Table::insert(std::string database, std::string name, std::vector<std::string> tuple) {
+    // Return false if table file doesn't exist
     if (!std::filesystem::exists(database + name + ".txt")) {
         return false;;
     }
 
+    // Return false if the schema of the tuple doesn't match the schema of the table
     std::vector<std::string> schema = getSchema(database, name);
     if (schema.size() != tuple.size()) {
         throw "Schema mismatch";
         return false;
     }
 
+    // Append the tuple to the end of the table file
     std::ofstream outf;
     outf.open(database + name + ".txt", std::ios::app);
     outf << "\n";

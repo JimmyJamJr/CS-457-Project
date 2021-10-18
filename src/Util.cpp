@@ -43,7 +43,7 @@ std::string first_word(std::string input) {
 } 
 
 std::string to_upper(std::string input) {
-    std::transform(input.begin(), input.end(), input.begin(), toupper);
+    std::transform(input.begin(), input.end(), input.begin(), ::toupper);
     return input;
 }
 

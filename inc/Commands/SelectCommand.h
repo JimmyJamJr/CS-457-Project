@@ -24,6 +24,7 @@ class SelectCommand : public ICommand {
             return "";
         }
 
+        // Command fails if no database in use
         if (database == "") {
             std::cout << "!SELECT command failed. No database is being used." << std::endl;
             return "";
@@ -31,13 +32,14 @@ class SelectCommand : public ICommand {
 
         int fromIndex = -1;
 
-        // Support for WHERE keyword
+        // attribute and condition of the WHERE keyword
         int whereIndex = -1;
         std::string attribute;
         int attribute_selected;
         std::string op;
         std::string operand;
 
+        // Find the indexes of FROM and WHERE keyword in input
         for (int i = 0; i < parms.size(); i++) {
             if (to_upper(parms[i]) == "FROM") {
                 fromIndex = i;
@@ -62,6 +64,9 @@ class SelectCommand : public ICommand {
             return "";
         }
 
+
+        // If the WHERE keyword exists in the command input, get the 
+        // schema index of the WHERE attribute
         if (whereIndex != -1) {
             attribute_selected = -1;
             for (int i = 0 ; i < schema.size(); i++) {
@@ -107,6 +112,7 @@ class SelectCommand : public ICommand {
         while (getline(file, line)) {
             int count = 0;
             std::vector<std::string> row = split(line, " | ");
+            // If the WHERE keyword is used, skip tuples that don't meet its condition
             if (whereIndex != -1) {
                 if (op == "=") {
                     if (operand != row[attribute_selected]) {
@@ -134,6 +140,7 @@ class SelectCommand : public ICommand {
                 }
             }
 
+            // Print out the tuples and attibrutes that are selected
             for (int i = 0; i < row.size(); i++) {
                 if (std::find(selected_indexes.begin(), selected_indexes.end(), i) != selected_indexes.end()) {
                     std::cout << (count > 0 ? " | " : "") << remove_quotes(row[i]);

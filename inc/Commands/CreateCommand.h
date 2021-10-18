@@ -32,9 +32,11 @@ class CreateCommand : public ICommand {
         }
         // Create a new table
         else if (type == "TABLE") {
+            // Get schema from input string
             std::vector<std::string> schema_vec = {parms.begin() + 3, parms.end()};
             std::string schema = create_schema(schema_vec);
             
+            // Comamnd fails if no database being used or schema format incorrect.
             if (database == "") {
                 std::cout << "!Failed to create table " + name + " because no database is being used." << std::endl;
                 return "";
@@ -45,6 +47,7 @@ class CreateCommand : public ICommand {
                 return "";
             }
             
+            // Try to create the new table
             bool success = Table::createTable(database, name, schema);
             std::cout << (success ? "Table " + name + " created." : "!Failed to create table " + name + " because it already exists.") << std::endl;
         }
@@ -60,6 +63,7 @@ class CreateCommand : public ICommand {
     std::string create_schema(std::vector<std::string> schema_vec) {
         if (schema_vec.size() < 2 || schema_vec.size() % 2 != 0) return "";
 
+        // Create schema in the format of name, type | ...
         std::string schema = "";
         int i = 0;
         for (std::string word : schema_vec) {
