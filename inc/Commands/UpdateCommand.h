@@ -17,10 +17,16 @@ class UpdateCommand : public ICommand {
 
     // Execute the command
     virtual std::string execute(std::string input, std::string database) {
-        std::vector<std::string> parms = split(input, " ");
+        std::vector<std::string> parms = split(input);
+
+        for (std::string s : parms) {
+            std::cout << s << " ";
+        }
+        std::cout << std::endl;
 
         // Command formatting check.
         if (parms.size() < 10 || to_upper(parms[2]) != "SET" || to_upper(parms[6]) != "WHERE") {
+            std::cout << input << std::endl;
             std::cout << "!UPDATE command failed. Bad syntax." << std::endl;
             return "";
         }
@@ -46,6 +52,10 @@ class UpdateCommand : public ICommand {
             return "";
         }
 
+        for (std::string s : schema) {
+            std::cout << s << " ";
+        }
+        std::cout << std::endl;
 
         // Find the schema index of the SET and WHERE attributes
         int set_att_index = -1;

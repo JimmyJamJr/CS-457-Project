@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <sstream>
 
 std::vector<std::string> split(std::string str, std::string token) {
     std::vector<std::string> result;
@@ -29,6 +30,13 @@ std::vector<std::string> split(std::string str, std::string token) {
         }
     }
     return result;
+}
+
+std::vector<std::string> split(std::string const &input) { 
+    std::istringstream buffer(input);
+    std::vector<std::string> ret((std::istream_iterator<std::string>(buffer)), 
+                                 std::istream_iterator<std::string>());
+    return ret;
 }
 
 std::string first_word(std::string input) {
@@ -63,4 +71,33 @@ std::string remove_quotes(std::string input) {
         }
     }
     return output;
+}
+
+std::string remove_ws(std::string input) {
+    int i = 0;
+    for (; i < input.length(); i++) {
+        if (!isspace(input[i])) break;
+    }
+    return input.substr(i, input.length() - i);
+}
+
+std::string remove_comments(std::string input) {
+    if (input[0] == '-' && input[1] == '-') {
+        int cmdStart = -1;
+        for (int i = 0; i < input.length() - 1; i++) {
+            if (input[i] == '\n') {
+                cmdStart = i + 1;
+            }
+        }
+        if (cmdStart != -1) {  
+            return input.substr(cmdStart, input.length() - cmdStart);
+        }
+        else {
+            return "";
+        }
+        
+    }
+    else {
+        return input;
+    }
 }

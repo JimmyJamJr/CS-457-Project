@@ -36,13 +36,13 @@ class InsertCommand : public ICommand {
         std::string tuple;
         for (int i = 3; i < parms.size(); i++) {
             if (i == 3) {
-                tuple += parms[i].substr(7, parms[i].length() - 7);
+                tuple += remove_ws(parms[i].substr(7, parms[i].length() - 7));
             }
             else if (i == parms.size() - 1) {
-                tuple += parms[i].substr(0, parms[i].length() - 2);
+                tuple += remove_ws(parms[i].substr(0, parms[i].length() - 2));
             }
             else {
-                tuple += parms[i];
+                tuple += remove_ws(parms[i]);
             }
         }
         // Change tuple format to vec
