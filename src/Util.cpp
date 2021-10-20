@@ -9,6 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <iterator>
 
 std::vector<std::string> split(std::string str, std::string token) {
     std::vector<std::string> result;
@@ -54,6 +55,11 @@ std::string first_word(std::string input) {
 
 std::string to_upper(std::string input) {
     std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+    return input;
+}
+
+std::string to_lower(std::string input) {
+    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
     return input;
 }
 

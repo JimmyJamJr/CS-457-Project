@@ -17,6 +17,8 @@ std::vector<std::string> split(std::string const &input);
 std::string first_word(std::string);
 // Changes all lower case letters to upper case in a string.
 std::string to_upper(std::string input);
+// Changes all upper case letters to lower case in a string.
+std::string to_lower(std::string input);
 // Remove a trailing semicolon in a string, if it exists.
 std::string remove_semicolon(std::string input);
 // Remove quotes surrounding a string, if it exists
