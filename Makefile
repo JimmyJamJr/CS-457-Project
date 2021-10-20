@@ -10,7 +10,7 @@ INCLUDE := -I./inc
 LIBPATH :=
 LIBS :=
 
-FLAGS :=  -Wall -std=c++17
+FLAGS := -std=c++17
 CCFLAGS := $(FLAGS)
 CXXFLAGS := $(FLAGS)
 
