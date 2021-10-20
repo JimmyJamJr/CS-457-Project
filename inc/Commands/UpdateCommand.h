@@ -19,11 +19,6 @@ class UpdateCommand : public ICommand {
     virtual std::string execute(std::string input, std::string database) {
         std::vector<std::string> parms = split(input);
 
-        for (std::string s : parms) {
-            std::cout << s << " ";
-        }
-        std::cout << std::endl;
-
         // Command formatting check.
         if (parms.size() < 10 || to_upper(parms[2]) != "SET" || to_upper(parms[6]) != "WHERE") {
             std::cout << input << std::endl;
@@ -51,11 +46,6 @@ class UpdateCommand : public ICommand {
             std::cout << "!Failed to update from " + table + " because it does not exist." << std::endl;
             return "";
         }
-
-        for (std::string s : schema) {
-            std::cout << s << " ";
-        }
-        std::cout << std::endl;
 
         // Find the schema index of the SET and WHERE attributes
         int set_att_index = -1;

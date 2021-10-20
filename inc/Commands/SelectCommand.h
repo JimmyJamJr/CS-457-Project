@@ -1,7 +1,8 @@
 // Jimson Huang
 // CS457
 // 9/29/2021
-// Select command for selecting attributes from a table.
+// Updated 10/19/2021
+// Select command for selecting attributes from a table, supports WHERE condition
 
 #pragma once
 
@@ -16,7 +17,7 @@ class SelectCommand : public ICommand {
 
     // Execute the command
     virtual std::string execute(std::string input, std::string database) {
-        std::vector<std::string> parms = split(input, " ");
+        std::vector<std::string> parms = split(input);
 
         // Command formatting check
         if (parms.size() < 4) {
@@ -143,7 +144,7 @@ class SelectCommand : public ICommand {
             // Print out the tuples and attibrutes that are selected
             for (int i = 0; i < row.size(); i++) {
                 if (std::find(selected_indexes.begin(), selected_indexes.end(), i) != selected_indexes.end()) {
-                    std::cout << (count > 0 ? " | " : "") << remove_quotes(row[i]);
+                    std::cout << (count > 0 ? "|" : "") << remove_quotes(row[i]);
                     count++;
                 }
             }

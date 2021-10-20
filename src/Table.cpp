@@ -1,6 +1,7 @@
 // Jimson Huang
 // CS457
 // 9/29/2021
+// Updated 10/19/2021
 // See header file for descriptions.
 
 #include "Table.h"
@@ -100,6 +101,7 @@ bool Table::insert(std::string database, std::string name, std::vector<std::stri
 
 bool Table::replace(std::string database, std::string name, std::vector<std::string> lines) {
     std::ofstream f(database + name + ".txt");
+    // Override contents of a table
     for (auto it = lines.begin(); it != lines.end(); it++) {
         f << *it;
         if (it != lines.end() - 1) {

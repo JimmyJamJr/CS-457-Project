@@ -1,6 +1,7 @@
 // Jimson Huang
 // CS457
 // 9/29/2021
+// Updated 10/19/2021
 // Utility header with functions mostly needed for easier string manipulation.
 
 #pragma once
@@ -20,7 +21,7 @@ std::string to_upper(std::string input);
 std::string remove_semicolon(std::string input);
 // Remove quotes surrounding a string, if it exists
 std::string remove_quotes(std::string input);
-// Removes whitespace before a string
+// Removes all whitespace at the begining of a string
 std::string remove_ws(std::string input);
-// Removes comments before a string
+// Removes all comments at the begining of a string
 std::string remove_comments(std::string input);

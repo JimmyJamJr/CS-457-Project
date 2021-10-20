@@ -17,7 +17,7 @@ class DeleteCommand : public ICommand {
 
     // Execute the command
     virtual std::string execute(std::string input, std::string database) {
-        std::vector<std::string> parms = split(input, " ");
+        std::vector<std::string> parms = split(input);
 
         // Command formatting check
         if (parms.size() < 7 || to_upper(parms[1]) != "FROM" || to_upper(parms[3]) != "WHERE") {

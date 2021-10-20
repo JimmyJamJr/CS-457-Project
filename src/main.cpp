@@ -1,6 +1,7 @@
 // Jimson Huang
 // CS457
 // 9/29/2021
+// Updated 10/19/2021
 // Main file of the program, accepts command line input or
 // .sql file.
 
@@ -29,7 +30,7 @@ std::shared_ptr<ICommand> commands[] = {
 // Fuction to check a string for possible commands or exit, returns true if exit condition reached
 bool processString(std::string entry, std::string & current_database) {
     // Skip comments and blank lines
-    if (std::all_of(entry.begin(), entry.end(), isspace)) {
+    if (std::all_of(entry.begin(), entry.end(), ::isspace)) {
         return false;
     }
     if (entry.substr(0, 2) == "--") return false;
@@ -49,7 +50,7 @@ bool processString(std::string entry, std::string & current_database) {
                     current_database = output;
                 }
                 recongnized = true;
-                break;
+                break; // Stop looking once command is found
             }
         }
 
@@ -66,10 +67,11 @@ int main(int ac, char** av) {
     // Current database being used
     std::string current_database = "";
 
-    // Check the command line argument for file input
+    // Handling the case of an entire .sql file
     if (ac > 1) {
         std::ifstream sql;
         std::string filename(av[1]);
+        // Check the existence of the sql file
         if (std::filesystem::exists(filename)) {
             sql = std::ifstream(filename);
         }
@@ -77,15 +79,18 @@ int main(int ac, char** av) {
             std::cout << "!Can't open file " << filename << " because it doens't exist." << std::endl;
             return 1;
         }
+        // Read entire file into content string
         std::string content((std::istreambuf_iterator<char>(sql)), (std::istreambuf_iterator<char>()));
         // Split input by ; into a list of commands
         std::vector<std::string> input_vec = split(content, ";");
         for (std::string entry : input_vec) {
-            quit = processString(remove_ws(remove_comments(remove_ws(entry))), current_database);
+            // Process the string after removing leading comments and whitespace
+            processString(remove_ws(remove_comments(remove_ws(entry))), current_database);
         }
 
         sql.close();
     }
+    // Handling the case of manually entered commands
     else {
         // Repeat until program exit command is encountered
         do {
@@ -99,6 +104,7 @@ int main(int ac, char** av) {
             // Split input by ; into a list of commands
             std::vector<std::string> input_vec = split(input, ";");
             for (std::string entry : input_vec) {
+                // Process the string after removing leading comments and whitespace
                 quit = processString(entry, current_database);
             }
             

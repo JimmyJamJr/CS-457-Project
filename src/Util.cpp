@@ -1,6 +1,7 @@
 // Jimson Huang
 // CS457
 // 9/29/2021
+// Updated 10/19/2021
 // See header for description.
 
 #include "Util.h"
@@ -34,9 +35,9 @@ std::vector<std::string> split(std::string str, std::string token) {
 
 std::vector<std::string> split(std::string const &input) { 
     std::istringstream buffer(input);
-    std::vector<std::string> ret((std::istream_iterator<std::string>(buffer)), 
+    std::vector<std::string> vec((std::istream_iterator<std::string>(buffer)), 
                                  std::istream_iterator<std::string>());
-    return ret;
+    return vec;
 }
 
 std::string first_word(std::string input) {
@@ -74,6 +75,7 @@ std::string remove_quotes(std::string input) {
 }
 
 std::string remove_ws(std::string input) {
+    // Skips over spaces in the begining then append the rest to output string
     int i = 0;
     for (; i < input.length(); i++) {
         if (!isspace(input[i])) break;
@@ -82,8 +84,10 @@ std::string remove_ws(std::string input) {
 }
 
 std::string remove_comments(std::string input) {
+    // Check for comments at the begining
     if (input[0] == '-' && input[1] == '-') {
         int cmdStart = -1;
+        // Find the start of the actual command
         for (int i = 0; i < input.length() - 1; i++) {
             if (input[i] == '\n') {
                 cmdStart = i + 1;

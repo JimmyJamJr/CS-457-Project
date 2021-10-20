@@ -16,7 +16,7 @@ class InsertCommand : public ICommand {
 
     // Execute the command
     virtual std::string execute(std::string input, std::string database) {
-        std::vector<std::string> parms = split(input, " ");
+        std::vector<std::string> parms = split(input);
 
         // Command formatting check
         if (parms.size() < 4 || to_upper(parms[1]) != "INTO" || to_upper(parms[3].substr(0, 7)) != "VALUES(" || remove_semicolon(parms[parms.size()-1]).back() != ')') {
@@ -35,6 +35,7 @@ class InsertCommand : public ICommand {
         // Reformat the input string to a tuple of attributes separated by space.
         std::string tuple;
         for (int i = 3; i < parms.size(); i++) {
+            // Remove leading or trailing parenthesis, and any whitespace
             if (i == 3) {
                 tuple += remove_ws(parms[i].substr(7, parms[i].length() - 7));
             }
