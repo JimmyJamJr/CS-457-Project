@@ -6,6 +6,7 @@
 #include "Util.h"
 #include <vector>
 #include <string>
+#include <algorithm>
 
 std::vector<std::string> split(std::string str, std::string token) {
     std::vector<std::string> result;
