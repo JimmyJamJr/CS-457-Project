@@ -24,7 +24,7 @@ class CreateCommand : public ICommand {
         }
 
         std::string type = to_upper(parms[1]);
-        std::string name = parms[2];
+        std::string name = split(parms[2], "(")[0];
         // Create a new database
         if (type == "DATABASE") {
             bool success = Database::createDatabase(name);
@@ -33,7 +33,11 @@ class CreateCommand : public ICommand {
         // Create a new table
         else if (type == "TABLE") {
             // Get schema from input string
-            std::vector<std::string> schema_vec = {parms.begin() + 3, parms.end()};
+            int schema_start_i;
+            for (schema_start_i = 0; schema_start_i < input.size() && input[schema_start_i] != '('; schema_start_i++);
+            std::string schema_str = input.substr(schema_start_i, input.length() - schema_start_i);
+            std::cout << schema_str << std::endl;
+            std::vector<std::string> schema_vec = split(schema_str, " ");
             std::string schema = create_schema(schema_vec);
             
             // Comamnd fails if no database being used or schema format incorrect.

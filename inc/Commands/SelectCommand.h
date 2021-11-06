@@ -15,6 +15,9 @@ class SelectCommand : public ICommand {
         return to_upper(first_word(input)) == "SELECT";
     };
 
+    // void inner_join(std::vector<std::string> parms, std::string database);
+    // void outer_join(std::vector<std::string> parms, std::string database);
+
     // Execute the command
     virtual std::string execute(std::string input, std::string database) {
         std::vector<std::string> parms = split(input);
@@ -28,6 +31,20 @@ class SelectCommand : public ICommand {
         // Command fails if no database in use
         if (database == "") {
             std::cout << "!SELECT command failed. No database is being used." << std::endl;
+            return "";
+        }
+
+        // Check keywords for joins and deal with separately
+        if (input.find(",") != std::string::npos) {
+            inner_join(parms, database);
+            return "";
+        }
+        if (to_upper(input).find("INNER JOIN") != std::string::npos) {
+            inner_join(parms, database);
+            return "";
+        }
+        if (to_upper(input).find("OUTER JOIN") != std::string::npos) {
+            outer_join(parms, database);
             return "";
         }
 
@@ -153,5 +170,119 @@ class SelectCommand : public ICommand {
 
         file.close();
         return "";
+    };
+
+    void inner_join(std::vector<std::string> parms, std::string database) {
+        int fromIndex = -1;
+        int whereIndex = -1;
+        std::string attribute;
+        std::string op;
+        std::string operand;
+
+        std::string table_left;
+        std::string left_var;
+        std::string table_right;
+        std::string right_var;
+
+        // Find the indexes of FROM and WHERE keyword in input
+        for (int i = 0; i < parms.size(); i++) {
+            if (to_upper(parms[i]) == "FROM") {
+                fromIndex = i;
+                if (parms[i+2].find(",") != std::string::npos) {
+                    table_left = parms[i+1];
+                    left_var = parms[i+2].substr(0, parms[i+2].length() - 1);
+                    table_right = parms[i+3];
+                    right_var = parms[i+4];
+                }
+                else if (to_upper(parms[3]) == "INNER" &&  to_upper(parms[4]) == "JOIN") {
+                    table_left = parms[i+1];
+                    left_var = parms[i+2];
+                    table_right = parms[i+5];
+                    right_var = parms[i+6];
+                }
+                else {
+                    std::cout << "!SELECT command failed. INNER JOIN sytax error." << std::endl;
+                    return;
+                }
+            }
+            if (to_upper(parms[i]) == "WHERE") {
+                whereIndex = i;
+                attribute = parms[i+1];
+                op = parms[i+2];
+                operand = parms[i+3];
+            }
+        }
+        if (fromIndex == -1) {
+            std::cout << "!SELECT command failed. FROM keyword not found." << std::endl;
+            return;
+        }
+        if (whereIndex == -1) {
+            std::cout << "!SELECT command failed. WHERE keyword not found." << std::endl;
+            return;
+        }
+
+        std::vector<std::string> schema_left = Table::getSchema(database, table_left);
+        std::vector<std::string> schema_right = Table::getSchema(database, table_right);
+        if (schema_left.size() == 0 || schema_right.size() == 0) {
+            std::cout << "!Failed to query INNER JOIN because one or more  tables do not exist." << std::endl;
+            return;
+        }
+
+        int selected_attribute_left = -1;
+        int selected_attribute_right = -1;
+
+        for (int i = 0 ; i < schema_left.size(); i++) {
+            if (split(schema_left[i], " ")[0] == attribute) {
+                selected_attribute_left = i;
+            }
+        }
+        for (int i = 0 ; i < schema_right.size(); i++) {
+            if (split(schema_right[i], " ")[0] == attribute) {
+                selected_attribute_right = i;
+            }
+        }
+
+        if (selected_attribute_left == -1 || selected_attribute_right == -1) {
+            std::cout << "!SELECT command failed. INNER JOIN condition attribute is not in schema." << std::endl;
+            return;
+        }
+
+        std::vector<std::string> file_left;
+        std::vector<std::string> file_right;
+
+        std::string line;
+        std::ifstream file = Table::getFile(database, table_left);
+        while (getline(file, line)) {
+            file_left.push_back(line);
+        }
+        file.close();
+        file = Table::getFile(database, table_right);
+        while (getline(file, line)) {
+            file_right.push_back(line);
+        }
+        file.close();
+
+        for (int i = 0; i < table_left.size(); i++) {
+            if (i != 0) {
+                std::cout << " | ";
+            }
+            std::cout << table_left[i];
+        }
+        for (int i = 0; i < table_right.size(); i++) {
+            std::cout << " | ";
+            std::cout << table_left[i];
+        }
+        std::cout << "\n";
+
+        for (int i = 1; i < file_left.size(); i++) {
+            for (int j = 1; j < file_right.size(); j++) {
+
+            }
+        }
+
+    };
+
+    void outer_join(std::vector<std::string> parms, std::string database) {
+
     };
 };

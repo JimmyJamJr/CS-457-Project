@@ -111,3 +111,13 @@ std::string remove_comments(std::string input) {
         return input;
     }
 }
+
+std::string remove_parenthesis(std::string input) {
+    std::string output = "";
+    for (char c : input) {
+        if (c != '(' && c != ')') {
+            output += c;
+        }
+    }
+    return output;
+}

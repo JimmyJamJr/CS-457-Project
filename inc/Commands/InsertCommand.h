@@ -37,13 +37,10 @@ class InsertCommand : public ICommand {
         for (int i = 3; i < parms.size(); i++) {
             // Remove leading or trailing parenthesis, and any whitespace
             if (i == 3) {
-                tuple += remove_ws(parms[i].substr(7, parms[i].length() - 7));
-            }
-            else if (i == parms.size() - 1) {
-                tuple += remove_ws(parms[i].substr(0, parms[i].length() - 2));
+                tuple += remove_ws(remove_parenthesis(parms[i].substr(7, parms[i].length() - 7)));
             }
             else {
-                tuple += remove_ws(parms[i]);
+                tuple += remove_ws(remove_parenthesis(parms[i]));
             }
         }
         // Change tuple format to vec
