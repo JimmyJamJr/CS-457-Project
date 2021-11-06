@@ -36,7 +36,6 @@ class CreateCommand : public ICommand {
             int schema_start_i;
             for (schema_start_i = 0; schema_start_i < input.size() && input[schema_start_i] != '('; schema_start_i++);
             std::string schema_str = input.substr(schema_start_i, input.length() - schema_start_i);
-            std::cout << schema_str << std::endl;
             std::vector<std::string> schema_vec = split(schema_str, " ");
             std::string schema = create_schema(schema_vec);
             
