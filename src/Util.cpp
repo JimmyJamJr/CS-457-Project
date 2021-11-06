@@ -121,3 +121,15 @@ std::string remove_parenthesis(std::string input) {
     }
     return output;
 }
+
+std::string remove_all_comments(std::string input) {
+    std::string output = "";
+    std::vector<std::string> lines = split(input, "\n");
+    for (auto line : lines) {
+        if (line[0] == '-' && line[1] == '-') {
+            continue;
+        }
+        output += line + "\n";
+    }
+    return output;
+}

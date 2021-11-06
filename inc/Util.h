@@ -29,3 +29,5 @@ std::string remove_ws(std::string input);
 std::string remove_comments(std::string input);
 // Removes all '(' and ')' characters from a string
 std::string remove_parenthesis(std::string input);
+// Remove all comment lines from a string
+std::string remove_all_comments(std::string input);

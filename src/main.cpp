@@ -82,7 +82,7 @@ int main(int ac, char** av) {
         // Read entire file into content string
         std::string content((std::istreambuf_iterator<char>(sql)), (std::istreambuf_iterator<char>()));
         // Split input by ; into a list of commands
-        std::vector<std::string> input_vec = split(content, ";");
+        std::vector<std::string> input_vec = split(remove_all_comments(content), ";");
         for (std::string entry : input_vec) {
             // Process the string after removing leading comments and whitespace
             processString(remove_ws(remove_comments(remove_ws(entry))), current_database);
