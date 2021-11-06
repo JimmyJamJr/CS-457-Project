@@ -101,7 +101,6 @@ class SelectCommand : public ICommand {
 
         // Create a list of indexes of the attibutes in the schema that is being selected
         // If * is used, selects all attributes in the schema
-        std::string output = "";
         std::vector<std::string> attribute_names = {parms.begin() + 1, parms.begin() + fromIndex};
         std::vector<int> selected_indexes;
         for (std::string attribute : attribute_names) {
@@ -181,7 +180,7 @@ class SelectCommand : public ICommand {
         std::string table_right;
         std::string right_var = "";
 
-        // Find the indexes of FROM and WHERE keyword in input
+        // Find the indexes of FROM keyword in input
         for (int i = 0; i < parms.size(); i++) {
             if (to_upper(parms[i]) == "FROM") {
                 fromIndex = i;
@@ -294,6 +293,130 @@ class SelectCommand : public ICommand {
     };
 
     void outer_join(std::vector<std::string> parms, std::string database) {
+        int fromIndex = -1;
+        std::string attribute_left;
+        std::string attribute_right;
+        std::string table_left;
+        std::string left_var = "";
+        std::string table_right;
+        std::string right_var = "";
 
+        // Find the indexes of FROM keyword in input
+        for (int i = 0; i < parms.size(); i++) {
+            if (to_upper(parms[i]) == "FROM") {
+                fromIndex = i;
+                if (to_upper(parms[i+3]) == "LEFT" &&  to_upper(parms[i+4]) == "OUTER" && to_upper(parms[i+5]) == "JOIN") {
+                    table_left = parms[i+1];
+                    left_var = parms[i+2];
+                    table_right = parms[i+6];
+                    right_var = parms[i+7];
+                }
+                else {
+                    std::cout << "!SELECT command failed. OUTER JOIN syntax error." << std::endl;
+                    return;
+                }
+            }
+            if (left_var != "" && right_var != "") {
+                if (parms[i].find(left_var + ".") != std::string::npos) {
+                    attribute_left = parms[i].substr(left_var.length() + 1, parms[i].size() - left_var.length() - 1);
+                }
+                if (parms[i].find(right_var + ".") != std::string::npos) {
+                    attribute_right = parms[i].substr(right_var.length() + 1, parms[i].size() - right_var.length() - 1);
+                }
+            }
+        }
+        if (fromIndex == -1) {
+            std::cout << "!SELECT command failed. FROM keyword not found." << std::endl;
+            return;
+        }
+        if (attribute_right == "" || attribute_left == "") {
+            std::cout << "!SELECT command failed. Attributes for OUTER JOIN not specified/found." << std::endl;
+            return;
+        }
+
+        std::vector<std::string> schema_left = Table::getSchema(database, table_left);
+        std::vector<std::string> schema_right = Table::getSchema(database, table_right);
+        if (schema_left.size() == 0 || schema_right.size() == 0) {
+            std::cout << "!Failed to query OUTER JOIN because one or more tables do not exist." << std::endl;
+            return;
+        }
+
+        int selected_attribute_left = -1;
+        int selected_attribute_right = -1;
+
+        for (int i = 0 ; i < schema_left.size(); i++) {
+            if (split(schema_left[i], " ")[0] == attribute_left) {
+                selected_attribute_left = i;
+            }
+        }
+        for (int i = 0 ; i < schema_right.size(); i++) {
+            if (split(schema_right[i], " ")[0] == attribute_right) {
+                selected_attribute_right = i;
+            }
+        }
+
+        if (selected_attribute_left == -1 || selected_attribute_right == -1) {
+            std::cout << "!SELECT command failed. OUTER JOIN condition attribute is not in schema." << std::endl;
+            return;
+        }
+
+        std::vector<std::vector<std::string>> file_left;
+        std::vector<std::vector<std::string>> file_right;
+
+        std::string line;
+        std::ifstream file = Table::getFile(database, table_left);
+        while (getline(file, line)) {
+            file_left.push_back(split(line, " | "));
+        }
+        file.close();
+        file = Table::getFile(database, table_right);
+        while (getline(file, line)) {
+            file_right.push_back(split(line, " | "));
+        }
+        file.close();
+
+        for (int i = 0; i < schema_left.size(); i++) {
+            if (i != 0) {
+                std::cout << "|";
+            }
+            std::cout << schema_left[i];
+        }
+        for (int i = 0; i < schema_right.size(); i++) {
+            std::cout << "|";
+            std::cout << schema_right[i];
+        }
+        std::cout << "\n";
+
+        for (int i = 1; i < file_left.size(); i++) {
+            int matches = 0;
+            for (int j = 1; j < file_right.size(); j++) {
+                if (file_left[i][selected_attribute_left] == file_right[j][selected_attribute_right]) {
+                    matches++;
+                    for (int k = 0; k < file_left[i].size(); k++) {
+                        if (k > 0) {
+                            std::cout << "|";
+                        }
+                        std::cout << remove_quotes(file_left[i][k]);
+                    }
+                    for (int k = 0; k < file_right[i].size(); k++) {
+                        std::cout << "|";
+                        std::cout << remove_quotes(file_right[j][k]);
+                    }
+                    std::cout << std::endl;
+                }
+            }
+            if (matches == 0) {
+                for (int k = 0; k < file_left[i].size(); k++) {
+                    if (k > 0) {
+                        std::cout << "|";
+                    }
+                    std::cout << remove_quotes(file_left[i][k]);
+                }
+                for (int k = 0; k < schema_right.size(); k++) {
+                    std::cout << "|";
+                }
+                std::cout << std::endl;
+            }
+        }
     };
 };

@@ -55,7 +55,7 @@ bool processString(std::string entry, std::string & current_database) {
         }
 
         if (!recongnized) {
-            std::cout << "Command not recongnized.\n";
+            std::cout << "Command \"" + entry + "\" not recongnized.\n";
         }
     }
     return false;
