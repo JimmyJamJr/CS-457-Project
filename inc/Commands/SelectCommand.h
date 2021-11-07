@@ -36,14 +36,17 @@ class SelectCommand : public ICommand {
 
         // Check keywords for joins and deal with separately
         if (input.find(",") != std::string::npos) {
+            // Inner join
             inner_join(parms, database);
             return "";
         }
         if (to_upper(input).find("INNER JOIN") != std::string::npos) {
+            // Inner join
             inner_join(parms, database);
             return "";
         }
         if (to_upper(input).find("OUTER JOIN") != std::string::npos) {
+            // Outer join
             outer_join(parms, database);
             return "";
         }
@@ -171,8 +174,10 @@ class SelectCommand : public ICommand {
         return "";
     };
 
+    // Function for handling inner joins
     void inner_join(std::vector<std::string> parms, std::string database) {
         int fromIndex = -1;
+
         std::string attribute_left;
         std::string attribute_right;
         std::string table_left;
@@ -180,16 +185,18 @@ class SelectCommand : public ICommand {
         std::string table_right;
         std::string right_var = "";
 
-        // Find the indexes of FROM keyword in input
+        // Find the indexes of the tables and variables
         for (int i = 0; i < parms.size(); i++) {
             if (to_upper(parms[i]) == "FROM") {
                 fromIndex = i;
+                // If short-hand inner join
                 if (parms[i+2].find(",") != std::string::npos) {
                     table_left = parms[i+1];
                     left_var = parms[i+2].substr(0, parms[i+2].length() - 1);
                     table_right = parms[i+3];
                     right_var = parms[i+4];
                 }
+                // If full inner join syntax
                 else if (to_upper(parms[i+3]) == "INNER" &&  to_upper(parms[i+4]) == "JOIN") {
                     table_left = parms[i+1];
                     left_var = parms[i+2];
@@ -201,6 +208,7 @@ class SelectCommand : public ICommand {
                     return;
                 }
             }
+            // Get the attributes being compared
             if (left_var != "" && right_var != "") {
                 if (parms[i].find(left_var + ".") != std::string::npos) {
                     attribute_left = parms[i].substr(left_var.length() + 1, parms[i].size() - left_var.length() - 1);
@@ -210,15 +218,18 @@ class SelectCommand : public ICommand {
                 }
             }
         }
+        // If FROM keyword doesn't exist
         if (fromIndex == -1) {
             std::cout << "!SELECT command failed. FROM keyword not found." << std::endl;
             return;
         }
+        // If no attributes are given for the join
         if (attribute_right == "" || attribute_left == "") {
             std::cout << "!SELECT command failed. Attributes for INNER JOIN not specified/found." << std::endl;
             return;
         }
 
+        // Schemas for both tables
         std::vector<std::string> schema_left = Table::getSchema(database, table_left);
         std::vector<std::string> schema_right = Table::getSchema(database, table_right);
         if (schema_left.size() == 0 || schema_right.size() == 0) {
@@ -229,6 +240,7 @@ class SelectCommand : public ICommand {
         int selected_attribute_left = -1;
         int selected_attribute_right = -1;
 
+        // Find the location in the schmeas of the attributes in the join
         for (int i = 0 ; i < schema_left.size(); i++) {
             if (split(schema_left[i], " ")[0] == attribute_left) {
                 selected_attribute_left = i;
@@ -240,14 +252,16 @@ class SelectCommand : public ICommand {
             }
         }
 
+        // If attribute not in either schema
         if (selected_attribute_left == -1 || selected_attribute_right == -1) {
             std::cout << "!SELECT command failed. INNER JOIN condition attribute is not in schema." << std::endl;
             return;
         }
 
+        // Read the table files into two vectors
         std::vector<std::vector<std::string>> file_left;
         std::vector<std::vector<std::string>> file_right;
-
+        
         std::string line;
         std::ifstream file = Table::getFile(database, table_left);
         while (getline(file, line)) {
@@ -260,6 +274,7 @@ class SelectCommand : public ICommand {
         }
         file.close();
 
+        // Print out the combined schemas of the two tabes
         for (int i = 0; i < schema_left.size(); i++) {
             if (i != 0) {
                 std::cout << "|";
@@ -272,6 +287,8 @@ class SelectCommand : public ICommand {
         }
         std::cout << "\n";
 
+        // For each tuple in the left table, check each tuple in the right tuple. If the attributes are equal, print out 
+        // a combined tuple with attributes from both tables
         for (int i = 1; i < file_left.size(); i++) {
             for (int j = 1; j < file_right.size(); j++) {
                 if (file_left[i][selected_attribute_left] == file_right[j][selected_attribute_right]) {
@@ -292,6 +309,7 @@ class SelectCommand : public ICommand {
 
     };
 
+    // Function for handling left outer joins
     void outer_join(std::vector<std::string> parms, std::string database) {
         int fromIndex = -1;
         std::string attribute_left;
@@ -301,7 +319,7 @@ class SelectCommand : public ICommand {
         std::string table_right;
         std::string right_var = "";
 
-        // Find the indexes of FROM keyword in input
+        // Find the indexes of keywords, table names, and variables
         for (int i = 0; i < parms.size(); i++) {
             if (to_upper(parms[i]) == "FROM") {
                 fromIndex = i;
@@ -316,6 +334,7 @@ class SelectCommand : public ICommand {
                     return;
                 }
             }
+            // Find the attributes to be compared
             if (left_var != "" && right_var != "") {
                 if (parms[i].find(left_var + ".") != std::string::npos) {
                     attribute_left = parms[i].substr(left_var.length() + 1, parms[i].size() - left_var.length() - 1);
@@ -325,15 +344,18 @@ class SelectCommand : public ICommand {
                 }
             }
         }
+        // If missing the FROM keyword
         if (fromIndex == -1) {
             std::cout << "!SELECT command failed. FROM keyword not found." << std::endl;
             return;
         }
+        // If attributes not specified for the join
         if (attribute_right == "" || attribute_left == "") {
             std::cout << "!SELECT command failed. Attributes for OUTER JOIN not specified/found." << std::endl;
             return;
         }
 
+        // Get schema of both tables
         std::vector<std::string> schema_left = Table::getSchema(database, table_left);
         std::vector<std::string> schema_right = Table::getSchema(database, table_right);
         if (schema_left.size() == 0 || schema_right.size() == 0) {
@@ -341,6 +363,7 @@ class SelectCommand : public ICommand {
             return;
         }
 
+        // Find the position in the schema of the slected attributes
         int selected_attribute_left = -1;
         int selected_attribute_right = -1;
 
@@ -354,12 +377,14 @@ class SelectCommand : public ICommand {
                 selected_attribute_right = i;
             }
         }
-
+        // If join attribute not in schema
         if (selected_attribute_left == -1 || selected_attribute_right == -1) {
             std::cout << "!SELECT command failed. OUTER JOIN condition attribute is not in schema." << std::endl;
             return;
         }
 
+
+        // Read both table files into vectors
         std::vector<std::vector<std::string>> file_left;
         std::vector<std::vector<std::string>> file_right;
 
@@ -375,6 +400,7 @@ class SelectCommand : public ICommand {
         }
         file.close();
 
+        // Print out combined schema
         for (int i = 0; i < schema_left.size(); i++) {
             if (i != 0) {
                 std::cout << "|";
@@ -387,6 +413,9 @@ class SelectCommand : public ICommand {
         }
         std::cout << "\n";
 
+        // For each tuple in the left table, look through all tuples in the right table. If attributes are equal, print out combined tuple
+        // with attributes of both tables. If no mathces are found, print out the left tuple anyways with null values for the attributes of the
+        // right table.
         for (int i = 1; i < file_left.size(); i++) {
             int matches = 0;
             for (int j = 1; j < file_right.size(); j++) {

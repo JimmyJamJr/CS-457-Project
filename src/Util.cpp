@@ -113,6 +113,7 @@ std::string remove_comments(std::string input) {
 }
 
 std::string remove_parenthesis(std::string input) {
+    // Skips over all '( 'and ')' in input string
     std::string output = "";
     for (char c : input) {
         if (c != '(' && c != ')') {
@@ -123,6 +124,7 @@ std::string remove_parenthesis(std::string input) {
 }
 
 std::string remove_all_comments(std::string input) {
+    // Split the string by line then add by all lines that doens't start with --
     std::string output = "";
     std::vector<std::string> lines = split(input, "\n");
     for (auto line : lines) {

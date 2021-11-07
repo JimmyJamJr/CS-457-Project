@@ -34,6 +34,7 @@ class CreateCommand : public ICommand {
         else if (type == "TABLE") {
             // Get schema from input string
             int schema_start_i;
+            // Find the position of the '(' character which indicates the start of the schema
             for (schema_start_i = 0; schema_start_i < input.size() && input[schema_start_i] != '('; schema_start_i++);
             std::string schema_str = input.substr(schema_start_i, input.length() - schema_start_i);
             std::vector<std::string> schema_vec = split(schema_str, " ");
