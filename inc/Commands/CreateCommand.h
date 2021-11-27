@@ -14,13 +14,13 @@ class CreateCommand : public ICommand {
     };
 
     // Execute the command
-    virtual std::string execute(std::string input, std::string database) {
+    virtual std::pair<std::string, std::shared_ptr<Transaction>> execute(std::string input, std::string database, std::shared_ptr<Transaction> transaction) {
         std::vector<std::string> parms = split(input, " ");
 
         // Command conditions check
         if (parms.size() < 3) {
             std::cout << "!CREATE command failed, requires type and name of object." << std::endl;
-            return "";
+            return default_return;
         }
 
         std::string type = to_upper(parms[1]);
@@ -43,12 +43,12 @@ class CreateCommand : public ICommand {
             // Comamnd fails if no database being used or schema format incorrect.
             if (database == "") {
                 std::cout << "!Failed to create table " + name + " because no database is being used." << std::endl;
-                return "";
+                return default_return;
             }
 
             if (schema == "") {
                 std::cout << "!Failed to create table " + name + " because the schema format is incorrect." << std::endl;
-                return "";
+                return default_return;
             }
             
             // Try to create the new table
@@ -59,11 +59,11 @@ class CreateCommand : public ICommand {
             std::cout << "!CREATE command failed, invalid object type " + type + "." << std::endl;
         }
 
-        return "";
+        return default_return;
     };
 
     private:
-    // Create table schema string given a vecotr of attributes, types
+    // Create table schema string given a vector of attributes, types
     std::string create_schema(std::vector<std::string> schema_vec) {
         if (schema_vec.size() < 2 || schema_vec.size() % 2 != 0) return "";
 

@@ -13,13 +13,13 @@ class DropCommand : public ICommand {
     };
 
     // Execute the command
-    virtual std::string execute(std::string input, std::string database) {
+    virtual std::pair<std::string, std::shared_ptr<Transaction>> execute(std::string input, std::string database, std::shared_ptr<Transaction> transaction) {
         std::vector<std::string> parms = split(input, " ");
 
         // Command formatting check
         if (parms.size() < 3) {
             std::cout << "!DROP command failed, requires type and name of object." << std::endl;
-            return "";
+            return default_return;
         }
 
         std::string type = to_upper(parms[1]);
@@ -33,7 +33,7 @@ class DropCommand : public ICommand {
         else if (type == "TABLE") {
             if (database == "") {
                 std::cout << "!Failed to delete " + name + " because no database is being used." << std::endl;
-                return "";
+                return default_return;
             }
 
             bool success = Table::deleteTable(database, name);
@@ -43,6 +43,6 @@ class DropCommand : public ICommand {
             std::cout << "!CREATE command failed, invalid object type " + type + "." << std::endl;
         }
 
-        return "";
+        return default_return;
     };
 };

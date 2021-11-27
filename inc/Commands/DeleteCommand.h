@@ -16,19 +16,19 @@ class DeleteCommand : public ICommand {
     };
 
     // Execute the command
-    virtual std::string execute(std::string input, std::string database) {
+    virtual std::pair<std::string, std::shared_ptr<Transaction>> execute(std::string input, std::string database, std::shared_ptr<Transaction> transaction) {
         std::vector<std::string> parms = split(input);
 
         // Command formatting check
         if (parms.size() < 7 || to_upper(parms[1]) != "FROM" || to_upper(parms[3]) != "WHERE") {
             std::cout << "!DELETE command failed. Bad syntax." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Command fails if no database is selected.
         if (database == "") {
             std::cout << "!DELETE command failed. No database is being used." << std::endl;
-            return "";
+            return default_return;
         }
 
         std::string table = parms[2];
@@ -41,7 +41,7 @@ class DeleteCommand : public ICommand {
         // Command fails if the table does not exist
         if (schema.size() == 0) {
             std::cout << "!Failed to delete from " + table + " because it does not exist." << std::endl;
-            return "";
+            return default_return;
         }
 
 
@@ -56,7 +56,7 @@ class DeleteCommand : public ICommand {
         // If the WHERE attribute is not in the schema
         if (attribute_selected == -1) {
             std::cout << "!DELETE command failed. Attribute is not in schema." << std::endl;
-            return "";
+            return default_return;
         }
 
 
@@ -113,6 +113,6 @@ class DeleteCommand : public ICommand {
         Table::replace(database, table, lines);\
         std::cout << deleted_count << " record" << (deleted_count > 1 ? "s deleted." : " deleted.") << std::endl;
 
-        return "";
+        return default_return;
     };
 };

@@ -19,36 +19,36 @@ class SelectCommand : public ICommand {
     // void outer_join(std::vector<std::string> parms, std::string database);
 
     // Execute the command
-    virtual std::string execute(std::string input, std::string database) {
+    virtual std::pair<std::string, std::shared_ptr<Transaction>> execute(std::string input, std::string database, std::shared_ptr<Transaction> transaction) {
         std::vector<std::string> parms = split(input);
 
         // Command formatting check
         if (parms.size() < 4) {
             std::cout << "!SELECT command failed. Bad syntax." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Command fails if no database in use
         if (database == "") {
             std::cout << "!SELECT command failed. No database is being used." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Check keywords for joins and deal with separately
         if (input.find(",") != std::string::npos) {
             // Inner join
             inner_join(parms, database);
-            return "";
+            return default_return;
         }
         if (to_upper(input).find("INNER JOIN") != std::string::npos) {
             // Inner join
             inner_join(parms, database);
-            return "";
+            return default_return;
         }
         if (to_upper(input).find("OUTER JOIN") != std::string::npos) {
             // Outer join
             outer_join(parms, database);
-            return "";
+            return default_return;
         }
 
         int fromIndex = -1;
@@ -74,7 +74,7 @@ class SelectCommand : public ICommand {
         }
         if (fromIndex == -1) {
             std::cout << "!SELECT command failed. FROM keyword not found." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Get schema of the table after FROM keyword
@@ -82,7 +82,7 @@ class SelectCommand : public ICommand {
         std::vector<std::string> schema = Table::getSchema(database, table);
         if (schema.size() == 0) {
             std::cout << "!Failed to query " + table + " because it does not exist." << std::endl;
-            return "";
+            return default_return;
         }
 
 
@@ -98,7 +98,7 @@ class SelectCommand : public ICommand {
 
             if (attribute_selected == -1) {
                 std::cout << "!SELECT command failed. Attribute is not in schema." << std::endl;
-                return "";
+                return default_return;
             }
         }
 
@@ -171,7 +171,7 @@ class SelectCommand : public ICommand {
         }
 
         file.close();
-        return "";
+        return default_return;
     };
 
     // Function for handling inner joins

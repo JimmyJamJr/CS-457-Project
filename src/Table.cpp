@@ -111,3 +111,20 @@ bool Table::replace(std::string database, std::string name, std::vector<std::str
     }
     return true;
 }
+
+bool Table::lock(std::string database, std::string name) {
+    if (std::filesystem::exists(database + to_lower(name) + "_lock")) {
+        return false;
+    }
+    std::ofstream f(database + to_lower(name) + "_lock");
+    f.close();
+    return true;
+}
+
+bool Table::release(std::string database, std::string name) {
+    if (std::filesystem::exists(database + to_lower(name) + "_lock")) {
+        std::filesystem::remove(database + to_lower(name) + "_lock");
+        return true;
+    }
+    return false;
+}

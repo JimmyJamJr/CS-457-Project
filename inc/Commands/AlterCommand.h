@@ -15,19 +15,19 @@ class AlterCommand : public ICommand {
     };
 
     // Execute the command
-    virtual std::string execute(std::string input, std::string database) {
+    virtual std::pair<std::string, std::shared_ptr<Transaction>> execute(std::string input, std::string database, std::shared_ptr<Transaction> transaction) {
         std::vector<std::string> parms = split(input, " ");
 
         // Command formatting check
         if (parms.size() < 6) {
             std::cout << "!ALTER command failed. Bad syntax." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Command fails if no database is in use.
         if (database == "") {
             std::cout << "!ALTER command failed. No database is being used." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Find index of ADD keyword
@@ -39,7 +39,7 @@ class AlterCommand : public ICommand {
         }
         if (addIndex == -1) {
             std::cout << "!ALTER command failed. ADD keyword not found." << std::endl;
-            return "";
+            return default_return;
         }
 
         std::string type = to_upper(parms[1]);
@@ -50,7 +50,7 @@ class AlterCommand : public ICommand {
             std::vector<std::string> schema = Table::getSchema(database, name);
             if (schema.size() == 0) {
                 std::cout << "!Failed to alter " + name + " because it does not exist." << std::endl;
-                return "";
+                return default_return;
             }
 
             // Add back existing attributes into new schema
@@ -68,6 +68,6 @@ class AlterCommand : public ICommand {
             std::cout << "Table " << name << " modified." << std::endl;
         }
 
-        return "";
+        return default_return;
     };
 };

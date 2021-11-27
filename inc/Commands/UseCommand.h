@@ -14,13 +14,13 @@ class UseCommand : public ICommand {
     };
 
     // Execute the command
-    virtual std::string execute(std::string input, std::string database) {
+    virtual std::pair<std::string, std::shared_ptr<Transaction>> execute(std::string input, std::string database, std::shared_ptr<Transaction> transaction) {
         std::vector<std::string> parms = split(input, " ");
 
         // Command formatting check
         if (parms.size() < 2) {
             std::cout << "!USE command failed, requires name of database." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Attempt to select a database and return its folder path back to main
@@ -32,6 +32,6 @@ class UseCommand : public ICommand {
             std::cout << "Using database " << parms[1] << "." << std::endl;
         }
 
-        return db;
+        return {db, nullptr};
     };
 };

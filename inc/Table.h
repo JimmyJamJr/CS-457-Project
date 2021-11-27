@@ -25,4 +25,7 @@ class Table {
     static bool insert(std::string database, std::string name, std::vector<std::string> tuple);
     // Replace the contents of the table with a new vector of tuples
     static bool replace(std::string database, std::string name, std::vector<std::string> lines);
+
+    static bool lock(std::string database, std::string name);
+    static bool release(std::string database, std::string name);
 };

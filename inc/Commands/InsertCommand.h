@@ -15,19 +15,19 @@ class InsertCommand : public ICommand {
     };
 
     // Execute the command
-    virtual std::string execute(std::string input, std::string database) {
+    virtual std::pair<std::string, std::shared_ptr<Transaction>> execute(std::string input, std::string database, std::shared_ptr<Transaction> transaction) {
         std::vector<std::string> parms = split(input);
 
         // Command formatting check
         if (parms.size() < 4 || to_upper(parms[1]) != "INTO" || to_upper(parms[3].substr(0, 7)) != "VALUES(" || remove_semicolon(parms[parms.size()-1]).back() != ')') {
             std::cout << "!INSERT command failed. Bad syntax." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Command fails if no database is selected.
         if (database == "") {
             std::cout << "!INSERT command failed. No database is being used." << std::endl;
-            return "";
+            return default_return;
         }
 
         std::string table = parms[2];
@@ -54,17 +54,17 @@ class InsertCommand : public ICommand {
         }
         catch (const char * e) {
             std::cout << "!INSERT command failed. Tuple does not fit the table schema." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Command fails if table does not exist
         if (!success) {
             std::cout << "!INSERT command failed. Table does not exist." << std::endl;
-            return "";
+            return default_return;
         }
 
         std::cout << "1 new record inserted." << std::endl;
 
-        return "";
+        return default_return;
     };
 };

@@ -12,6 +12,7 @@
 #include <sstream>
 #include <filesystem>
 #include "Database.h"
+#include "Transaction.h"
 
 #include "Commands.h"
 
@@ -28,7 +29,7 @@ std::shared_ptr<ICommand> commands[] = {
 };
 
 // Fuction to check a string for possible commands or exit, returns true if exit condition reached
-bool processString(std::string entry, std::string & current_database) {
+bool processString(std::string entry, std::string & current_database, std::shared_ptr<Transaction> & current_transaction) {
     // Skip comments and blank lines
     if (std::all_of(entry.begin(), entry.end(), ::isspace)) {
         return false;
@@ -45,9 +46,12 @@ bool processString(std::string entry, std::string & current_database) {
         // Iterate through commands and look for a matching command to execute
         for (std::shared_ptr<ICommand> cmd : commands) {
             if (cmd->match(entry)) {
-                std::string output = cmd->execute(entry, current_database);
-                if (output != "") {
-                    current_database = output;
+                std::pair<std::string, std::shared_ptr<Transaction>> output = cmd->execute(entry, current_database);
+                if (output.first != "") {
+                    current_database = output.first;
+                }
+                if (output.second != nullptr) {
+                    current_transaction = output.second;
                 }
                 recongnized = true;
                 break; // Stop looking once command is found
@@ -67,6 +71,8 @@ int main(int ac, char** av) {
     // Current database being used
     std::string current_database = "";
 
+    std::shared_ptr<Transaction> current_transaction = nullptr;
+
     // Handling the case of an entire .sql file
     if (ac > 1) {
         std::ifstream sql;
@@ -85,7 +91,7 @@ int main(int ac, char** av) {
         std::vector<std::string> input_vec = split(remove_all_comments(content), ";");
         for (std::string entry : input_vec) {
             // Process the string after removing leading comments and whitespace
-            processString(remove_ws(remove_comments(remove_ws(entry))), current_database);
+            processString(remove_ws(remove_comments(remove_ws(entry))), current_database, current_transaction);
         }
 
         sql.close();
@@ -105,7 +111,7 @@ int main(int ac, char** av) {
             std::vector<std::string> input_vec = split(input, ";");
             for (std::string entry : input_vec) {
                 // Process the string after removing leading comments and whitespace
-                quit = processString(entry, current_database);
+                quit = processString(entry, current_database, current_transaction);
             }
             
 

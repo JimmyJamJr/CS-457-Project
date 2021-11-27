@@ -16,20 +16,20 @@ class UpdateCommand : public ICommand {
     };
 
     // Execute the command
-    virtual std::string execute(std::string input, std::string database) {
+    virtual std::pair<std::string, std::shared_ptr<Transaction>> execute(std::string input, std::string database, std::shared_ptr<Transaction> transaction) {
         std::vector<std::string> parms = split(input);
 
         // Command formatting check.
         if (parms.size() < 10 || to_upper(parms[2]) != "SET" || to_upper(parms[6]) != "WHERE") {
             std::cout << input << std::endl;
             std::cout << "!UPDATE command failed. Bad syntax." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Command fails if no database is selected.
         if (database == "") {
             std::cout << "!UPDATE command failed. No database is being used." << std::endl;
-            return "";
+            return default_return;
         }
 
         std::string table = parms[1];
@@ -44,7 +44,7 @@ class UpdateCommand : public ICommand {
         std::vector<std::string> schema = Table::getSchema(database, table);
         if (schema.size() == 0) {
             std::cout << "!Failed to update from " + table + " because it does not exist." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Find the schema index of the SET and WHERE attributes
@@ -63,7 +63,7 @@ class UpdateCommand : public ICommand {
         // If the SET or WHERE attribute is not in schema
         if (set_att_index == -1 || where_att_index == -1) {
             std::cout << "!UPDATE command failed. Attribute is not in schema." << std::endl;
-            return "";
+            return default_return;
         }
 
         // Go through each tuple of the table file, iterate each attribute in the tuple, if the attribute of the tuple
@@ -114,6 +114,6 @@ class UpdateCommand : public ICommand {
         Table::replace(database, table, lines);
         std::cout << modified_count << " record" << (modified_count > 1 ? "s modified." : " modified.") << std::endl;
 
-        return "";
+        return default_return;
     };
 };
