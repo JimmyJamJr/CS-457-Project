@@ -13,3 +13,5 @@
 #include "Commands/InsertCommand.h"
 #include "Commands/DeleteCommand.h"
 #include "Commands/UpdateCommand.h"
+#include "Commands/BeginCommand.h"
+#include "Commands/CommitCommand.h"

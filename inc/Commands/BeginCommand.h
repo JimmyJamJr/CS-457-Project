@@ -17,10 +17,11 @@ class BeginCommand : public ICommand {
             std::cout << "!BEGIN command failed, format incorrect." << std::endl;
             return default_return;
         }
+        Transaction * t = new Transaction();
+        transaction = std::make_shared<Transaction>(*t);
 
-        // Attempt to select a database and return its folder path back to main
-        std::shared_ptr<Transaction> new_transaction = std::make_shared<Transaction>();
+        std::cout << "Transaction starts." << std::endl;
 
-        return {"", new_transaction};
+        return {"", transaction};
     };
 };

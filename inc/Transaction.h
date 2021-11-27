@@ -2,13 +2,13 @@
 
 #include <vector>
 #include <string>
-#include <utility>
+#include <tuple>
 
 class Transaction {
     private:
-    std::vector<std::pair<std::string, std::string>> modified_tables;
+    std::vector<std::tuple<std::string, std::string, std::vector<std::string>>> modified_tables;
 
     public:
-    void addModification(std::string table, std::string contents);
-    std::vector<std::pair<std::string, std::string>> getModifications();
+    void addModification(std::string db, std::string table, std::vector<std::string> contents);
+    std::vector<std::tuple<std::string, std::string, std::vector<std::string>>> getModifications();
 };

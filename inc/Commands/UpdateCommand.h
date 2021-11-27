@@ -111,9 +111,21 @@ class UpdateCommand : public ICommand {
         }
 
         // Update the table file with the new tuples
-        Table::replace(database, table, lines);
+        if (transaction == nullptr) {
+            Table::replace(database, table, lines);
+        }
+        else {
+            bool success = Table::lock(database, table);
+            if (success) {
+                transaction->addModification(database, table, lines);
+            }
+            else {
+                std::cout << "Error: Table " + table + " is locked!" << std::endl;;
+            }
+        }
+        
         std::cout << modified_count << " record" << (modified_count > 1 ? "s modified." : " modified.") << std::endl;
 
-        return default_return;
+        return {"", transaction};
     };
 };

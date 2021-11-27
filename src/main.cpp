@@ -25,7 +25,9 @@ std::shared_ptr<ICommand> commands[] = {
     std::make_shared<AlterCommand>(),
     std::make_shared<InsertCommand>(),
     std::make_shared<DeleteCommand>(),
-    std::make_shared<UpdateCommand>()
+    std::make_shared<UpdateCommand>(),
+    std::make_shared<BeginCommand>(),
+    std::make_shared<CommitCommand>()
 };
 
 // Fuction to check a string for possible commands or exit, returns true if exit condition reached
@@ -46,7 +48,7 @@ bool processString(std::string entry, std::string & current_database, std::share
         // Iterate through commands and look for a matching command to execute
         for (std::shared_ptr<ICommand> cmd : commands) {
             if (cmd->match(entry)) {
-                std::pair<std::string, std::shared_ptr<Transaction>> output = cmd->execute(entry, current_database);
+                std::pair<std::string, std::shared_ptr<Transaction>> output = cmd->execute(entry, current_database, current_transaction);
                 if (output.first != "") {
                     current_database = output.first;
                 }
@@ -111,7 +113,7 @@ int main(int ac, char** av) {
             std::vector<std::string> input_vec = split(input, ";");
             for (std::string entry : input_vec) {
                 // Process the string after removing leading comments and whitespace
-                quit = processString(entry, current_database, current_transaction);
+                quit = processString(remove_comments(remove_ws(entry)), current_database, current_transaction);
             }
             
 
