@@ -1,13 +1,14 @@
 #pragma once
 
-#include <queue>
+#include <vector>
 #include <string>
+#include <utility>
 
 class Transaction {
     private:
-    std::queue<std::string> commands;
+    std::vector<std::pair<std::string, std::string>> modified_tables;
 
     public:
-    void add(std::string command);
-    std::queue<std::string> getCommands();
+    void addModification(std::string table, std::string contents);
+    std::vector<std::pair<std::string, std::string>> getModifications();
 };

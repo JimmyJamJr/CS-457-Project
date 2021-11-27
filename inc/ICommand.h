@@ -11,6 +11,7 @@
 #include <utility>
 #include "Database.h"
 #include "Util.h"
+#include "Transaction.h"
 
 class ICommand {
     public:
