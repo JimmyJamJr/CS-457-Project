@@ -19,7 +19,7 @@ class InsertCommand : public ICommand {
         std::vector<std::string> parms = split(input);
 
         // Command formatting check
-        if (parms.size() < 4 || to_upper(parms[1]) != "INTO" || to_upper(parms[3].substr(0, 7)) != "VALUES(" || remove_semicolon(parms[parms.size()-1]).back() != ')') {
+        if (parms.size() < 4 || to_upper(parms[1]) != "INTO" || (to_upper(parms[3]) != "VALUES" && to_upper(parms[3].substr(0, 7)) != "VALUES(") || remove_semicolon(parms[parms.size()-1]).back() != ')') {
             std::cout << "!INSERT command failed. Bad syntax." << std::endl;
             return default_return;
         }
@@ -37,7 +37,12 @@ class InsertCommand : public ICommand {
         for (int i = 3; i < parms.size(); i++) {
             // Remove leading or trailing parenthesis, and any whitespace
             if (i == 3) {
-                tuple += remove_ws(remove_parenthesis(parms[i].substr(7, parms[i].length() - 7)));
+                if (to_upper(parms[i]) == "VALUES") {
+                    continue;
+                }
+                else {
+                    tuple += remove_ws(remove_parenthesis(parms[i].substr(7, parms[i].length() - 7)));
+                }
             }
             else {
                 tuple += remove_ws(remove_parenthesis(parms[i]));

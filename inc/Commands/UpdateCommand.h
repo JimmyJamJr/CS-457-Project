@@ -120,7 +120,8 @@ class UpdateCommand : public ICommand {
                 transaction->addModification(database, table, lines);
             }
             else {
-                std::cout << "Error: Table " + table + " is locked!" << std::endl;;
+                std::cout << "Error: Table " + table + " is locked!" << std::endl;
+                return {"", transaction};
             }
         }
         
