@@ -1,7 +1,7 @@
 // Jimson Huang
 // CS457
 // 9/29/2021
-// Updated 10/19/2021
+// Updated 10/19/2021, 12/8/2021
 // Main file of the program, accepts command line input or
 // .sql file.
 
@@ -72,7 +72,7 @@ int main(int ac, char** av) {
 
     // Current database being used
     std::string current_database = "";
-
+    // Current transcation being used, nullptr indicates no transcation
     std::shared_ptr<Transaction> current_transaction = nullptr;
 
     // Handling the case of an entire .sql file

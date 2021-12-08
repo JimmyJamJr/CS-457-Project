@@ -1,6 +1,7 @@
 // Jimson Huang
 // CS457
 // 10/18/2021
+// Updated 12/8/2021
 // Update command for changing the attribute values of a tuple in a table, supports
 // conditions using the WHERE keyword.
 
@@ -111,10 +112,12 @@ class UpdateCommand : public ICommand {
         }
 
         // Update the table file with the new tuples
+        // If not using transaction, direclty update the table file
         if (transaction == nullptr) {
             Table::replace(database, table, lines);
         }
         else {
+            // If using transaction, lock the table and add modification to current transaction
             bool success = Table::lock(database, table);
             if (success) {
                 transaction->addModification(database, table, lines);

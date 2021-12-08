@@ -26,6 +26,9 @@ class Table {
     // Replace the contents of the table with a new vector of tuples
     static bool replace(std::string database, std::string name, std::vector<std::string> lines);
 
+    // Checks to see if a _lock file exists for a table, if so return false indicating the table is locked
+    // if not, create the _lock file to lock the table
     static bool lock(std::string database, std::string name);
+    // If a _lock file exists for the table, remove it so the table can be unlocked.
     static bool release(std::string database, std::string name);
 };

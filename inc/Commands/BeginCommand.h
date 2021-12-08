@@ -1,3 +1,8 @@
+// Jimson Huang
+// CS457
+// 12/8/2021
+// Begin command to begin a new transaction
+
 #pragma once
 
 #include "ICommand.h"
@@ -17,6 +22,8 @@ class BeginCommand : public ICommand {
             std::cout << "!BEGIN command failed, format incorrect." << std::endl;
             return default_return;
         }
+
+        // Create a new transaction and return it to be saved in main
         Transaction * t = new Transaction();
         transaction = std::make_shared<Transaction>(*t);
 
